@@ -5,7 +5,6 @@ public class StringArrayTest {
 
         for (Integer i = 0; i < numberOfStrings; i++) {
             tests.add('Test ' + i);
-            System.debug(LoggingLevel.INFO, '*** tests[i] ' + tests[i]);
 		}
 
         return tests;
