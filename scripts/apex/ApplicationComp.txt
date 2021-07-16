@@ -10,13 +10,9 @@ global class Application implements Comparable {
 
     global Integer compareTo(Object compareTo) {
         Application compareToApp = (Application)compareTo;
-        Integer returnValue = 0;
-        if (amount > compareToApp.amount) {
-            returnValue = 1;
-        } else if (amount < compareToApp.amount) {
-            returnValue = -1;
-        }
+        if (a == compareToApp.a) return 0;
+        if (a > compareToApp.a) return 1;
+        return -1;
 
-        return returnValue;
     }
 }
