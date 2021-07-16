@@ -3,7 +3,7 @@ global class Application implements Comparable {
     public String name;
     public Integer amount;
 
-    public Application(String n Integer a) {
+    public Application(String n, Integer a) {
         name = n;
         amount = a;
     }
