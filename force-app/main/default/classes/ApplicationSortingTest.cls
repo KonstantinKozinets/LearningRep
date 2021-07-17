@@ -1,7 +1,7 @@
 @isTest
 private class ApplicationSortingTest {
 
-    static testmethod void setupTestData() {
+    static testmethod void SortingTest() {
         List<Application> appList = new List<Application>();
         appList.add(new Application('TestApplicationTwo',412));
         appList.add(new Application('TestApplicationOne',534));
