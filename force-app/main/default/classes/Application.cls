@@ -1,9 +1,5 @@
 global class Application implements Comparable {
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> d0ffa91114bbc0235864e581b9f9d25e782332d0
     public String name;
     public Integer amount;
 
