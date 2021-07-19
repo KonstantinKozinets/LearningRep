@@ -25,7 +25,7 @@ private class ApplicationSortingTest {
             }
         }
 
-        System.Debug('Count of true values while comparison: '+truecount);
+        System.Debug('Count of "true" values while comparison: '+truecount);
         System.AssertEquals(truecount, 999);
         System.AssertEquals(applist.size(), 1000);
 
