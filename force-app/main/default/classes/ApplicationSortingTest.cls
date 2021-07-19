@@ -3,13 +3,13 @@ private class ApplicationSortingTest {
 
     static testmethod void setupTestData() {
         List<Application> appList = new List<Application>();
-        integer i = 0;
-        integer k = 0;
-        integer truecount = 0;
+        Integer i = 0;
+        Integer k = 0;
+        Integer truecount = 0;
 
         while (i<1000) {
-            string order = 'app '+String.valueOf(i);
-            integer amoun = Integer.valueof((Math.random() * 10000));
+            String order = 'app '+String.valueOf(i);
+            Integer amoun = Integer.valueof((Math.random() * 10000));
             appList.add(new Application(order,amoun));
             i++;
         }
@@ -19,7 +19,7 @@ private class ApplicationSortingTest {
         System.debug(appList);
 
         while (k<999) {
-            if(applist[k].amount<=applist[k+1].amount) {
+            if(applist[k].amount<=applist[k + 1].amount) {
             	truecount++;
                 k++;
             }
