@@ -1,6 +1,7 @@
 @isTest
 private class ApplicationSortingTest {
 
+<<<<<<< HEAD
     static testmethod void setupTestData() {
         List<Application> appList = new List<Application>();
         integer i = 0;
@@ -28,6 +29,21 @@ private class ApplicationSortingTest {
         System.Debug('Count of true values while comparison: '+truecount);
         System.AssertEquals(truecount, 999);
         System.AssertEquals(applist.size(), 1000);
+=======
+    static testmethod void SortingTest() {
+        List<Application> appList = new List<Application>();
+        appList.add(new Application('TestApplicationTwo',412));
+        appList.add(new Application('TestApplicationOne',534));
+        appList.add(new Application('TestApplicationThree',123));
+
+        appList.sort();
+
+        System.debug(appList);
+
+        System.assertEquals(123, appList[0].amount);
+        System.assertEquals(412, appList[1].amount);
+        System.assertEquals(534, appList[2].amount);
+>>>>>>> d0ffa91114bbc0235864e581b9f9d25e782332d0
 
     }
 
