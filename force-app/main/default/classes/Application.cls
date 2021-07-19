@@ -13,7 +13,6 @@ global class Application implements Comparable {
         if (amount == compareToApp.amount) return 0;
         if (amount > compareToApp.amount) return 1;
         return -1;
-
     }
 
 }
