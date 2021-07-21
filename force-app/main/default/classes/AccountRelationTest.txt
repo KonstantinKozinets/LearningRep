@@ -1,0 +1,9 @@
+@isTest
+private class AccountRelationTest {
+
+    @isTest
+    private static void GetParentsIdsListTest() {
+        List<Id> accs = AccountRelation.GetParentsIds(0015g00000GeH9hAAF);
+        system.debug('accs')
+    }
+}
