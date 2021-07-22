@@ -47,9 +47,9 @@ public class AccountHierarchy {
         return subs;
     }
 
-    public static Map<Id,List<Account>> ParentsMap(List<Account> accs){
+    public static Map<String,List<Account>> ParentsMap(List<Account> accs){
 
-        Map<Id,List<Account>> ParentsTree = new Map<Id,List<Account>>();
+        Map<String,List<Account>> ParentsTree = new Map<String,List<Account>>();
         for(Account acc: accs){
             List<Account> parents = new List<Account>();
             Id currentId = acc.ParentId;
@@ -67,18 +67,18 @@ public class AccountHierarchy {
                 }
             } while (top != true);
 			if(parents.IsEmpty() == false){
-                ParentsTree.put(acc.id, parents);
+                ParentsTree.put(acc.Name, parents);
             }
         }
         return ParentsTree;
 
     }
 
-    public static Map<Id,List<Account>> SubsMap(List<Account> accs){
+    public static Map<Account,List<Account>> SubsMap(List<Account> accs){
 
-        Map<Id,List<Account>> SubsTree = new Map<Id,List<Account>>();
+        Map<String,List<Account>> SubsTree = new Map<String,List<Account>>();
         for(Account acc: accs){
-            List<Account> subs = new List<Account>();
+            List<String> subs = new List<String>();
             Id currentId = acc.Id;
             Boolean bottom = false;
             do {
@@ -98,7 +98,7 @@ public class AccountHierarchy {
             }
         	} while (bottom != true);
             if(subs.IsEmpty() == false){
-                SubsTree.put(acc.id, subs);
+                SubsTree.put(acc.Name, subs);
             }
         }
         return SubsTree;

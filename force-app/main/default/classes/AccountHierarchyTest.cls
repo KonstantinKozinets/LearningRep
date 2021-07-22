@@ -108,7 +108,7 @@ public class AccountHierarchyTest {
         }
 
         Test.startTest();
-         Map<Id,List<Account>> parentMap = AccountHierarchy.ParentsMap(accs);
+         Map<String,List<Account>> parentMap = AccountHierarchy.ParentsMap(accs);
         Test.stopTest();
 
         for (String key : parentMap.keySet()) {
@@ -133,7 +133,7 @@ public class AccountHierarchyTest {
         }
 
         Test.startTest();
-         Map<Id,List<Account>> subMap = AccountHierarchy.SubsMap(accs);
+         Map<String,List<Account>> subMap = AccountHierarchy.SubsMap(accs);
         Test.stopTest();
 
         for (String key : subMap.keySet()) {
