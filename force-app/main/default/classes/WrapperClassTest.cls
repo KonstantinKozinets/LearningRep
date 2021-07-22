@@ -11,11 +11,19 @@ public class WrapperClassTest {
             for (Integer i = 0; i < 11; i++){
                 string someObject = typpe + String.ValueOf(i);
                 wpcls.add(new WrapperClass(typpe, someObject));
-                i++;
             }
         }
-        System.Debug(wpcls);
+
+        for (WrapperClass variable : wpcls) {
+            System.debug(LoggingLevel.INFO, '*** variable ' + variable);
+        }
         Map<String,List<WrapperClass>> finalMap = WrapperClass.WrapperClassMap(wpcls);
-        System.Debug(finalMap);
+
+        for (String key : finalMap.keySet()) {
+            System.debug(LoggingLevel.INFO, '*** key ' + key);
+            for (WrapperClass variable : finalMap.get(key)) {
+                System.debug(LoggingLevel.INFO, '*** variable ' + variable);
+            }
+        }
     }
 }
