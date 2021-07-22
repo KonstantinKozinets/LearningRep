@@ -17,6 +17,7 @@ public class WrapperClass {
             } else {
                 typesMap.put(wpcl.wrapperType, new List<WrapperClass> { wpcl });
             }
+        }
         return typesMap;
     }
 }
