@@ -1,7 +1,7 @@
 public class AccountHierarchy {
-    
+
     public static List<Account> AccountParents(Account acc){
-        
+
         List<Account> allAccs = [SELECT Id, ParentId, Name
                                  FROM Account];
         List<Account> parents = new List<Account>();
@@ -18,10 +18,10 @@ public class AccountHierarchy {
             } else {
                 top = true;
             }
-        } while (top != true);              
+        } while (top != true);
         return parents;
     }
-    
+
     public static List<Account> AccountSubs(Account acc){
         List<Account> allAccs = [SELECT Id, ParentId, Name
                                  FROM Account];
@@ -43,12 +43,12 @@ public class AccountHierarchy {
             } else {
                 bottom = true;
             }
-        } while (bottom != true);                     
+        } while (bottom != true);
         return subs;
     }
-    
+
     public static Map<Id,List<Id>> ParentsMap(List<Account> accs){
-        
+
         Map<Id,List<Id>> ParentsTree = new Map<Id,List<Id>>();
         for(Account acc: accs){
             List<Id> parents = new List<Id>();
@@ -71,11 +71,11 @@ public class AccountHierarchy {
             }
         }
         return ParentsTree;
-        
+
     }
-    
+
     public static Map<Id,List<Id>> SubsMap(List<Account> accs){
-        
+
         Map<Id,List<Id>> SubsTree = new Map<Id,List<Id>>();
         for(Account acc: accs){
             List<Id> subs = new List<Id>();
@@ -102,7 +102,7 @@ public class AccountHierarchy {
             }
         }
         return SubsTree;
-        
+
     }
 
 }
