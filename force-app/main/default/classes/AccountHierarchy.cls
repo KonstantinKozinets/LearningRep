@@ -1,7 +1,7 @@
 public class AccountHierarchy {
-
+    
     public static List<Account> AccountParents(Account acc){
-
+        
         List<Account> allAccs = [SELECT Id, ParentId, Name
                                  FROM Account];
         List<Account> parents = new List<Account>();
@@ -18,10 +18,10 @@ public class AccountHierarchy {
             } else {
                 top = true;
             }
-        } while (top != true);
+        } while (top != true);              
         return parents;
     }
-
+    
     public static List<Account> AccountSubs(Account acc){
         List<Account> allAccs = [SELECT Id, ParentId, Name
                                  FROM Account];
@@ -43,22 +43,22 @@ public class AccountHierarchy {
             } else {
                 bottom = true;
             }
-        } while (bottom != true);
+        } while (bottom != true);                     
         return subs;
     }
-
-    public static Map<Id,List<Id>> ParentsMap(List<Account> accs){
-
-        Map<Id,List<Id>> ParentsTree = new Map<Id,List<Id>>();
+    
+    public static Map<Id,List<Account>> ParentsMap(List<Account> accs){
+        
+        Map<Id,List<Account>> ParentsTree = new Map<Id,List<Account>>();
         for(Account acc: accs){
-            List<Id> parents = new List<Id>();
+            List<Account> parents = new List<Account>();
             Id currentId = acc.ParentId;
             Boolean top = false;
             do {
                 if (currentId != null){
                     for(Account acct: accs){
                         if (acct.id == currentId){
-                            parents.add(acct.id);
+                            parents.add(acct);
                             currentId = acct.ParentId;
                         }
                     }
@@ -71,14 +71,14 @@ public class AccountHierarchy {
             }
         }
         return ParentsTree;
-
+        
     }
-
-    public static Map<Id,List<Id>> SubsMap(List<Account> accs){
-
-        Map<Id,List<Id>> SubsTree = new Map<Id,List<Id>>();
+    
+    public static Map<Id,List<Account>> SubsMap(List<Account> accs){
+        
+        Map<Id,List<Account>> SubsTree = new Map<Id,List<Account>>();
         for(Account acc: accs){
-            List<Id> subs = new List<Id>();
+            List<Account> subs = new List<Account>();
             Id currentId = acc.Id;
             Boolean bottom = false;
             do {
@@ -87,7 +87,7 @@ public class AccountHierarchy {
                     list<Account> checks = new List<Account>();
                     if (acct.ParentId == currentId){
                         checks.add(acct);
-                        subs.add(acct.Id);
+                        subs.add(acct);
                         currentId = acct.Id;
                     } else if (checks.size() == 0){
                         bottom = true;
@@ -102,7 +102,7 @@ public class AccountHierarchy {
             }
         }
         return SubsTree;
-
+        
     }
 
 }
