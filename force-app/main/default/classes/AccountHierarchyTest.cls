@@ -6,13 +6,15 @@ public class AccountHierarchyTest {
 
         Integer branch;
         Integer account;
+        List<Account> testAccs = new List<Account>();
         for(branch = 1; branch < 3; branch++){
             for(account = 1; account < 6; account++){
                 String accName = 'v'+branch+'TestLvl'+account;
                 Account acc = new Account(Name = accName);
-                insert acc;
+                testAccs.add(acc);
             }
         }
+        insert testAccs;
 
         List<Account> accsBranchOne = [SELECT Id, Name, ParentId
                                        FROM Account
