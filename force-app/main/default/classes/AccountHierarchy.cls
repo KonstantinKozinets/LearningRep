@@ -74,11 +74,11 @@ public class AccountHierarchy {
 
     }
 
-    public static Map<Account,List<Account>> SubsMap(List<Account> accs){
+    public static Map<String,List<Account>> SubsMap(List<Account> accs){
 
         Map<String,List<Account>> SubsTree = new Map<String,List<Account>>();
         for(Account acc: accs){
-            List<String> subs = new List<String>();
+            List<Account> subs = new List<Account>();
             Id currentId = acc.Id;
             Boolean bottom = false;
             do {
