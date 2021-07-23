@@ -1,51 +1,49 @@
-public class AccountHierarchy {
+    public class AccountHierarchy {
 
-    public static List<Account> AccountParents(Account acc){
+        public static List<Account> AccountParents(Account acc){
 
-        List<Account> allAccs = [SELECT Id, ParentId, Name
-                                 FROM Account];
-        List<Account> parents = new List<Account>();
-        Id currentId = acc.ParentId;
-        Boolean top = false;
-        do {
-            if (currentId != null){
-                for(Account acct: allAccs){
-                    if (acct.id == currentId){
-                        parents.add(acct);
-                        currentId = acct.ParentId;
+            List<Account> allAccs = [SELECT Id, ParentId, Name
+                                    FROM Account];
+            List<Account> parents = new List<Account>();
+            Id currentId = acc.ParentId;
+            Boolean top = false;
+            do {
+                if (currentId != null){
+                    for(Account acct: allAccs){
+                        if (acct.id == currentId){
+                            parents.add(acct);
+                            currentId = acct.ParentId;
+                        }
                     }
+                } else {
+                    top = true;
                 }
-            } else {
-                top = true;
-            }
-        } while (top != true);
-        return parents;
-    }
+            } while (top != true);
+            return parents;
+        }
 
-    public static List<Account> AccountSubs(Account acc){
-        List<Account> allAccs = [SELECT Id, ParentId, Name
-                                 FROM Account];
-        List<Account> subs = new List<Account>();
-        Id currentId = acc.Id;
-        Boolean bottom = false;
-        do {
-            if (currentId != null){
+        public static List<Account> AccountSubs(Account acc){
+            List<Account> allAccs = [SELECT Id, ParentId, Name
+                                    FROM Account];
+            List<Account> subs = new List<Account>();
+            List<Id> subAccIds = new List<Id> { acc.id };
+            Boolean bottom = false;
+            integer i = 0;
+            do {
                 for(Account acct: allAccs){
                     list<Account> checks = new List<Account>();
-                    if (acct.ParentId == currentId){
+                    if (acct.ParentId == subAccIds[i]){
                         checks.add(acct);
                         subs.add(acct);
-                        currentId = acct.Id;
+                        subAccIds.add(acct.Id);
                     } else if (checks.size() == 0){
                         bottom = true;
                     }
                 }
-            } else {
-                bottom = true;
-            }
-        } while (bottom != true);
-        return subs;
-    }
+                i++;
+            } while ((bottom != true)||(i<subAccIds.size()));
+            return subs;
+        }
 
     public static Map<String,List<Account>> ParentsMap(List<Account> accs){
 
@@ -79,30 +77,31 @@ public class AccountHierarchy {
         Map<String,List<Account>> SubsTree = new Map<String,List<Account>>();
         for(Account acc: accs){
             List<Account> subs = new List<Account>();
-            Id currentId = acc.Id;
+            List<Id> subAccIds = new List<Id> { acc.id };
             Boolean bottom = false;
+            integer i = 0;
             do {
-            if (currentId != null){
-                for(Account acct: accs){
-                    list<Account> checks = new List<Account>();
-                    if (acct.ParentId == currentId){
-                        checks.add(acct);
-                        subs.add(acct);
-                        currentId = acct.Id;
-                    } else if (checks.size() == 0){
-                        bottom = true;
+                if (subAccIds[i] != null){
+                    for(Account acct: accs){
+                        list<Account> checks = new List<Account>();
+                        if (acct.ParentId == subAccIds[i]){
+                            checks.add(acct);
+                            subs.add(acct);
+                            subAccIds.add(acct.Id);
+                        } else if (checks.size() == 0){
+                            bottom = true;
+                        }
                     }
+                } else {
+                    bottom = true;
                 }
-            } else {
-                bottom = true;
-            }
-        	} while (bottom != true);
+                i++;
+        	} while ((bottom != true)||(i<subAccIds.size()));
             if(subs.IsEmpty() == false){
                 SubsTree.put(acc.Name, subs);
             }
         }
         return SubsTree;
-
     }
 
 }
