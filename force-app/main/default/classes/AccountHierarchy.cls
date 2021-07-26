@@ -1,4 +1,4 @@
-    public class AccountHierarchy {
+public class AccountHierarchy {
 
         public static List<Account> getParentIds(Account acc){
 
