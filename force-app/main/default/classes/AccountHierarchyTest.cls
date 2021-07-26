@@ -46,7 +46,7 @@ public class AccountHierarchyTest {
     }
 
     @isTest
-    static void AccountParentsTest() {
+    static void getParentIdsTest() {
 
         Account acc = [SELECT Id, Name, ParentId
                        FROM Account
@@ -57,7 +57,7 @@ public class AccountHierarchyTest {
         System.debug('Account picked: Name = '+acc.Name+'. Id = '+acc.Id);
 
         Test.startTest();
-        List<Account> parents = AccountHierarchy.AccountParents(acc);
+        List<Account> parents = AccountHierarchy.getParentIds(acc);
         Test.stopTest();
 
         integer i = 1;
@@ -72,7 +72,7 @@ public class AccountHierarchyTest {
     }
 
 	@isTest
-    static void AccountSubsTest() {
+    static void getChildIdsTest() {
 
         Account acc = [SELECT Id, Name, ParentId
                        FROM Account
@@ -83,7 +83,7 @@ public class AccountHierarchyTest {
         System.debug('Account picked: Name = '+acc.Name+'. Id = '+acc.Id);
 
         Test.startTest();
-        List<Account> subs = AccountHierarchy.AccountSubs(acc);
+        List<Account> subs = AccountHierarchy.getChildIds(acc);
         Test.stopTest();
 
         integer i = 1;
@@ -98,7 +98,7 @@ public class AccountHierarchyTest {
     }
 
 	@isTest
-    static void ParentsMapTest() {
+    static void getParentIdsMapTest() {
 
         List<Account> accs = [SELECT Id, ParentId, Name
                               FROM Account
@@ -110,7 +110,7 @@ public class AccountHierarchyTest {
         }
 
         Test.startTest();
-         Map<String,List<Account>> parentMap = AccountHierarchy.ParentsMap(accs);
+         Map<String,List<Account>> parentMap = AccountHierarchy.getParentIds(accs);
         Test.stopTest();
 
         for (String key : parentMap.keySet()) {
@@ -123,7 +123,7 @@ public class AccountHierarchyTest {
     }
 
     @isTest
-    static void SubsMapTest() {
+    static void getChildIdsMapTest() {
 
         List<Account> accs = [SELECT Id, ParentId, Name
                               FROM Account
@@ -135,7 +135,7 @@ public class AccountHierarchyTest {
         }
 
         Test.startTest();
-         Map<String,List<Account>> subMap = AccountHierarchy.SubsMap(accs);
+         Map<String,List<Account>> subMap = AccountHierarchy.getChildIds(accs);
         Test.stopTest();
 
         for (String key : subMap.keySet()) {

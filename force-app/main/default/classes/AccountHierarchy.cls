@@ -1,6 +1,6 @@
     public class AccountHierarchy {
 
-        public static List<Account> AccountParents(Account acc){
+        public static List<Account> getParentIds(Account acc){
 
             List<Account> allAccs = [SELECT Id, ParentId, Name
                                     FROM Account];
@@ -22,7 +22,7 @@
             return parents;
         }
 
-        public static List<Account> AccountSubs(Account acc){
+        public static List<Account> getChildIds(Account acc){
             List<Account> allAccs = [SELECT Id, ParentId, Name
                                     FROM Account];
             List<Account> subs = new List<Account>();
@@ -45,7 +45,7 @@
             return subs;
         }
 
-    public static Map<String,List<Account>> ParentsMap(List<Account> accs){
+    public static Map<String,List<Account>> getParentIds(List<Account> accs){
 
         Map<String,List<Account>> ParentsTree = new Map<String,List<Account>>();
         for(Account acc: accs){
@@ -72,7 +72,7 @@
 
     }
 
-    public static Map<String,List<Account>> SubsMap(List<Account> accs){
+    public static Map<String,List<Account>> getChildIds(List<Account> accs){
 
         Map<String,List<Account>> SubsTree = new Map<String,List<Account>>();
         for(Account acc: accs){
