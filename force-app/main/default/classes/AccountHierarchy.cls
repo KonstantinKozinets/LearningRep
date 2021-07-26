@@ -47,7 +47,7 @@
 
     public static Map<String,List<Account>> getParentIds(List<Account> accs){
 
-        Map<String,List<Account>> ParentsTree = new Map<String,List<Account>>();
+        Map<Id,List<Account>> ParentsTree = new Map<Id,List<Account>>();
         for(Account acc: accs){
             List<Account> parents = new List<Account>();
             Id currentId = acc.ParentId;
@@ -65,7 +65,7 @@
                 }
             } while (top != true);
 			if(parents.IsEmpty() == false){
-                ParentsTree.put(acc.Name, parents);
+                ParentsTree.put(acc.Id, parents);
             }
         }
         return ParentsTree;
@@ -74,7 +74,7 @@
 
     public static Map<String,List<Account>> getChildIds(List<Account> accs){
 
-        Map<String,List<Account>> SubsTree = new Map<String,List<Account>>();
+        Map<Id,List<Account>> SubsTree = new Map<Id,List<Account>>();
         for(Account acc: accs){
             List<Account> subs = new List<Account>();
             List<Id> subAccIds = new List<Id> { acc.id };
@@ -98,7 +98,7 @@
                 i++;
         	} while ((bottom != true)||(i<subAccIds.size()));
             if(subs.IsEmpty() == false){
-                SubsTree.put(acc.Name, subs);
+                SubsTree.put(acc.Id, subs);
             }
         }
         return SubsTree;
