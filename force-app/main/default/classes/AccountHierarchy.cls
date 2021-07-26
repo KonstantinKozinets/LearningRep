@@ -45,7 +45,7 @@
             return subs;
         }
 
-    public static Map<String,List<Account>> getParentIds(List<Account> accs){
+    public static Map<Id,List<Account>> getParentIds(List<Account> accs){
 
         Map<Id,List<Account>> ParentsTree = new Map<Id,List<Account>>();
         for(Account acc: accs){
@@ -72,7 +72,7 @@
 
     }
 
-    public static Map<String,List<Account>> getChildIds(List<Account> accs){
+    public static Map<Id,List<Account>> getChildIds(List<Account> accs){
 
         Map<Id,List<Account>> SubsTree = new Map<Id,List<Account>>();
         for(Account acc: accs){
