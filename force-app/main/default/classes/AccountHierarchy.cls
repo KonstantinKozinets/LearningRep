@@ -2,14 +2,14 @@ public class AccountHierarchy {
 
     private static Map<Id, Account> getAccounts {
         get {
-            if(getAccounts == null) {
+            if (getAccounts == null) {
                 getAccounts = new Map<Id, Account>([
                     SELECT Id, ParentId, Name, (SELECT Id, ParentId, Name FROM ChildAccounts)
                     FROM Account
                     WHERE ParentId != NULL
                 ]);
                 List<Id> parentsAdd = new List<Id>();
-                for(Account a : getAccounts.values()){
+                for (Account a : getAccounts.values()){
                     if(!getAccounts.containsKey(a.ParentId)){
                         parentsAdd.add(a.ParentId);
                     }
@@ -27,40 +27,27 @@ public class AccountHierarchy {
         private set;
     }
 
-    public static void AddParentIds(List<Account> parents, Id currentId){
+    public static void addParentIds(List<Account> parents, Id currentId){
+        if (getAccounts.containsKey(currentId)){
 
-        parents.addAll(new List<Account>(getParents(currentId)));
+            Id parentId = getAccounts.get(currentId).ParentId;
 
+            if (parentId != null){
+                parents.add(getAccounts.get(parentId));
+                addParentIds(parents, parentId);
+            }
+        }
     }
 
     public static List<Account> getParents(Id accId){
-
         List<Account> parents = new List<Account>();
 
-        if (getAccounts.containsKey(accId)){
-
-            Id currentId = getAccounts.get(accId).ParentId;
-
-            if (currentId != null){
-                parents.add(getAccounts.get(currentId));
-                AddParentIds(parents, currentId);
-            }
-        }
+        addParentIds(parents, accId);
 
         return parents;
-
     }
 
-    private static void addChildren(List<Account> children, Id currentId){
-
-        children.addAll(new List<Account>(getChildren(currentId)));
-
-    }
-
-    public static List<Account> getChildren(Id accId){
-
-        List<Account> children = new List<Account>();
-
+    private static void addChildren(List<Account> children, Id accId){
         if (getAccounts.containsKey(accId)){
 
             for(Account a : getAccounts.get(accId).ChildAccounts){
@@ -68,6 +55,13 @@ public class AccountHierarchy {
                 addChildren(children, a.Id);
             }
         }
+
+    }
+
+    public static List<Account> getChildren(Id accId){
+        List<Account> children = new List<Account>();
+
+        addChildren(children, accId);
 
         return children;
 
