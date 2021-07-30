@@ -76,7 +76,6 @@ public class AccountHierarchyTest {
         Test.stopTest();
 
         for (String key : parentsMap.keySet()) {
-
             System.assertEquals(parentsMap.get(key), AccountHierarchy.getParents(key));
 		}
     }
@@ -91,7 +90,6 @@ public class AccountHierarchyTest {
         Test.stopTest();
 
         for (String key : childrenMap.keySet()) {
-
             System.assertEquals(childrenMap.get(key), AccountHierarchy.getChildren(key));
 		}
     }
