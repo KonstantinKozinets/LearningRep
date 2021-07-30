@@ -2,67 +2,106 @@ public class AccountHierarchy {
 
     private static Map<Id, Account> getAccounts {
         get {
-            if (getAccounts == null) {
+            if(getAccounts == null) {
                 getAccounts = new Map<Id, Account>([
-                    SELECT Id, ParentId, Name, (SELECT Id, ParentId, Name FROM ChildAccounts) ChildAcc
+                    SELECT Id, ParentId, Name, (SELECT Id, ParentId, Name FROM ChildAccounts)
                     FROM Account
+                    WHERE ParentId != NULL
                 ]);
+                List<Id> parentsAdd = new List<Id>();
+                for(Account a : getAccounts.values()){
+                    if(!getAccounts.containsKey(a.ParentId)){
+                        parentsAdd.add(a.ParentId);
+                    }
+                }
+                getAccounts.putAll(new Map<Id, Account>([
+                    SELECT Id, ParentId, Name, (SELECT Id, ParentId, Name FROM ChildAccounts)
+                    FROM Account
+                    WHERE Id IN :parentsAdd
+                ]));
             }
+
             return getAccounts;
+
         }
         private set;
     }
 
-    public static List<Account> getParentIds(Id accId){
+    public void AddParentIds(List<Account> parents, Id currentId){
 
-        Id currentId = getAccounts.get(accId).ParentId;
-        List<Account> parents = new List<Account>();
-        if(currentId != null){
-            parents.add(getAccounts.get(currentId));
-            parents.addAll(getParentIds(currentId));
+        parents = getParents(currentId);
+
+    }
+
+    public static List<Account> getParents(Id accId){
+
+        if (getAccounts.containsKey(accId)){
+
+            Id currentId = getAccounts.get(accId).ParentId;
+
+            List<Account> parents = new List<Account>();
+
+            if (currentId != null){
+                parents.add(getAccounts.get(currentId));
+                AddParentIds(parents, currentId);
+            }
+
             return parents;
+
         } else {
-            return parents;
+
+            return null;
         }
     }
 
+    private void addChildren(List<Account> children, Id currentId){
 
-     public static List<Account> getChildIds(Id accId){
+        children = getChildren(currentId);
 
-         List<Account> children = new List<Account>();
-         for(Account a : getAccounts.values()){
-             if(a.ParentId == accId){
-                 children.add(a);
-                 children.addAll(getChildIds(a.id));
-             }
-         }
-         return children;
+    }
 
-     }
+    public static List<Account> getChildren(Id accId){
 
-     public static Map<Id,List<Account>> getParentIds(List<Id> accs){
+        if (getAccounts.containsKey(accId)){
 
-         Map<Id,List<Account>> ParentsTree = new Map<Id,List<Account>>();
+            List<Account> children = new List<Account>();
+            for(Account a : getAccounts.get(accId).ChildAccounts){
+                children.add(a);
+                addChildren(children, a.Id);
+            }
 
-         for (Id keyId : accs){
-             List<Account> parents = getParentIds(keyId);
-             ParentsTree.put(keyId, parents);
-         }
+            return children;
+        } else {
 
-         return ParentsTree;
+            return null;
 
-     }
+        }
+    }
 
-     public static Map<Id,List<Account>> getChildIds(List<Id> accs){
+    public static Map<Id,List<Account>> getParents(List<Id> accs){
 
-         Map<Id, List<Account>> SubsTree = new Map<Id, List<Account>>();
+        Map<Id,List<Account>> ParentsTree = new Map<Id,List<Account>>();
 
-         for(Id subId : accs){
-             List<Account> childs = getChildIds(subId);
-             SubsTree.put(subId, childs);
-         }
+        for (Id keyId : accs){
+            List<Account> parents = getParents(keyId);
+            ParentsTree.put(keyId, parents);
+        }
 
-         return SubsTree;
-     }
+        return ParentsTree;
+
+    }
+
+    public static Map<Id,List<Account>> getChildren(List<Id> accs){
+
+        Map<Id, List<Account>> SubsTree = new Map<Id, List<Account>>();
+
+        for(Id subId : accs){
+            List<Account> childs = getChildren(subId);
+            SubsTree.put(subId, childs);
+        }
+
+        return SubsTree;
+
+    }
 
 }
