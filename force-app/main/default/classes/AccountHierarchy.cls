@@ -67,11 +67,11 @@ public class AccountHierarchy {
 
     }
 
-    public static Map<Id,List<Account>> getParents(Set<Id> accs){
+    public static Map<Id,List<Account>> getParents(Set<Id> accounts){
 
         Map<Id,List<Account>> ParentsTree = new Map<Id,List<Account>>();
 
-        for (Id keyId : accs){
+        for (Id keyId : accounts){
             List<Account> parents = getParents(keyId);
             ParentsTree.put(keyId, parents);
         }
@@ -80,13 +80,13 @@ public class AccountHierarchy {
 
     }
 
-    public static Map<Id,List<Account>> getChildren(Set<Id> accs){
+    public static Map<Id,List<Account>> getChildren(Set<Id> accounts){
 
         Map<Id, List<Account>> SubsTree = new Map<Id, List<Account>>();
 
-        for(Id subId : accs){
-            List<Account> childs = new List<Account>(getChildren(subId));
-            SubsTree.put(subId, childs);
+        for(Id subId : accounts){
+            List<Account> children = new List<Account>(getChildren(subId));
+            SubsTree.put(subId, children);
         }
 
         return SubsTree;
