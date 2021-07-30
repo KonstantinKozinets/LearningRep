@@ -6,149 +6,93 @@ public class AccountHierarchyTest {
 
         Integer branch;
         Integer account;
-        List<Account> testAccs = new List<Account>();
-        for(branch = 1; branch < 3; branch++){
-            for(account = 1; account < 6; account++){
-                String accName = 'v'+branch+'TestLvl'+account;
-                Account acc = new Account(Name = accName);
-                testAccs.add(acc);
-            }
-        }
-        insert testAccs;
-
-        List<Account> accsBranchOne = [SELECT Id, Name, ParentId
-                                       FROM Account
-                                       WHERE Name LIKE 'v1%'];
+        List<Account> testAccounts = new List<Account>();
         Id accBranchOneId = null;
-        System.debug('------------------------------ Branch one -----------------------------------');
-        for(Account abo: accsBranchOne){
+
+        for(account = 1; account < 11; account++){
+            testAccounts.add(new Account( Name = 'vTestLvl' + account ));
+        }
+
+        insert testAccounts;
+
+        for(Account abo: testAccounts){
             abo.ParentId = accBranchOneId;
             accBranchOneId = abo.id;
-            System.Debug('Account ' + abo.Name + '. Id: ' + abo.Id + ' inserted with Parent Id: ' + abo.ParentId);
         }
 
-        Account secondChildOne = new Account(Name ='v1 Second Child Acc', ParentId = accsBranchOne[2].id);
+        Account secondChildOne = new Account( Name ='v1 Second Child Acc', ParentId = testAccounts[2].id );
         insert secondChildOne;
-        System.Debug('Account ' + secondChildOne.Name + '. Id: ' + secondChildOne.Id + ' inserted with Parent Id: ' + secondChildOne.ParentId);
-        update accsBranchOne;
 
-        List<Account> accsBranchTwo = [SELECT Id, Name, ParentId
-                                       FROM Account
-                                       WHERE Name LIKE 'v2%'];
-        Id accBranchTwoId = null;
-        System.debug('------------------------------ Branch two -----------------------------------');
-        for(Account abt: accsBranchTwo){
-            abt.ParentId = accBranchTwoId;
-            accBranchTwoId = abt.id;
-            System.Debug('Account ' + abt.Name + '. Id: ' + abt.Id + ' inserted with Parent Id: ' + abt.ParentId);
-        }
-
-        Account secondChildTwo = new Account(Name ='v2 Second Child Acc', ParentId = accsBranchTwo[2].id);
+        Account secondChildTwo = new Account( Name ='v2 Second Child Acc', ParentId = testAccounts[6].id );
         insert secondChildTwo;
-        System.Debug('Account ' + secondChildTwo.Name + '. Id: ' + secondChildTwo.Id + ' inserted with Parent Id: ' + secondChildTwo.ParentId);
-        update accsBranchTwo;
-        System.debug('---------------------------------- Updated ----------------------------------');
+
+        update testAccounts;
 
     }
 
     @isTest
-    static void getParentIdsTest() {
+    static void getParentsTest() {
 
-        Account acc = [SELECT Id, Name, ParentId
-                       FROM Account
-                       WHERE Name = 'v1TestLvl3'
-                       LIMIT 1];
-
-        System.debug('------------------------ Checking Parents for Acc ---------------------------');
-        System.debug('Account picked: Name = '+acc.Name+'. Id = '+acc.Id);
+        Account acc = [
+            SELECT Id, Name, ParentId
+            FROM Account
+            WHERE Name = 'vTestLvl6'
+            LIMIT 1
+        ];
 
         Test.startTest();
-        List<Account> parents = AccountHierarchy.getParentIds(acc);
+        List<Account> parents = AccountHierarchy.getParents(acc.Id);
         Test.stopTest();
 
-        integer i = 1;
-        for(Account par: parents){
-            System.debug('Parent ' + i + ' for this acc: ' + par.Name + '. Id: ' + par.Id);
-            i++;
-        }
-
-        System.assertEquals(2,parents.size());
-        System.debug('-----------------------------------------------------------------------------');
+        System.assertEquals(5,parents.size());
 
     }
 
 	@isTest
-    static void getChildIdsTest() {
+    static void getChildrenTest() {
 
-        Account acc = [SELECT Id, Name, ParentId
-                       FROM Account
-                       WHERE Name = 'v1TestLvl3'
-                       LIMIT 1];
-
-        System.debug('---------------------- Checking SubAccounts for Acc -------------------------');
-        System.debug('Account picked: Name = '+acc.Name+'. Id = '+acc.Id);
+        Account acc = [
+            SELECT Id, Name, ParentId
+            FROM Account
+            WHERE Name = 'vTestLvl5'
+            LIMIT 1
+        ];
 
         Test.startTest();
-        List<Account> subs = AccountHierarchy.getChildIds(acc.Id);
+        List<Account> children = AccountHierarchy.getChildren(acc.Id);
         Test.stopTest();
 
-        integer i = 1;
-        for(Account sub: subs){
-            System.debug('Sub ' + i + ' for this acc: ' + sub.Name + '. Id: ' + sub.Id);
-            i++;
-        }
-
-        System.assertEquals(3,subs.size());
-        System.debug('-----------------------------------------------------------------------------');
+        System.assertEquals(6,children.size());
 
     }
 
 	@isTest
-    static void getParentIdsMapTest() {
+    static void getParentsMapTest() {
 
-        List<Account> accs = [SELECT Id, ParentId, Name
-                              FROM Account
-                              WHERE Name LIKE 'v%'];
-        System.debug('----------------------- Testing ParentsMap for Acc ------------------------');
-        System.debug('Accounts for test list: ');
-        for (Account acc: accs){
-            System.debug('Name = ' + acc.Name+'. Id = ' + acc.Id + '. ParentId: ' + acc.ParentId);
-        }
+        Set<Id> accounts = new Set<Id>(new Map<Id, Account>([SELECT Id FROM Account WHERE Name LIKE 'v%']).keySet());
 
         Test.startTest();
-         Map<Id,List<Account>> parentMap = AccountHierarchy.getParentIds(accs);
+         Map<Id,List<Account>> parentsMap = AccountHierarchy.getParents(accounts);
         Test.stopTest();
 
-        for (String key : parentMap.keySet()) {
-            System.debug('--------------------- Parents of Acc ' + key);
-            for (Account acct : parentMap.get(key)) {
-                System.debug('*** Parent Name: ' + acct.Name + '. Id: '+acct.Id);
-            }
+        for (String key : parentsMap.keySet()) {
+
+            System.assertEquals(parentsMap.get(key), AccountHierarchy.getParents(key));
 		}
-        System.debug('-----------------------------------------------------------------------------');
     }
 
     @isTest
-    static void getChildIdsMapTest() {
+    static void getChildrenMapTest() {
 
-        List<Account> accs = [SELECT Id, ParentId, Name
-                              FROM Account
-                              WHERE Name LIKE 'v%'];
-        System.debug('----------------------- Testing SubAccountsMap for Acc ------------------------');
-        System.debug('Accounts for test list: ');
-        for (Account acc: accs){
-            System.debug('Name = ' + acc.Name+'. Id = ' + acc.Id + '. ParentId: ' + acc.ParentId);
-        }
+        Set<Id> accounts = new Set<Id>(new Map<Id, Account>([SELECT Id FROM Account WHERE Name LIKE 'v%']).keySet());
 
         Test.startTest();
-         Map<Id,List<Account>> subMap = AccountHierarchy.getChildIds(accs);
+         Map<Id,List<Account>> childrenMap = AccountHierarchy.getChildren(accounts);
         Test.stopTest();
 
-        for (String key : subMap.keySet()) {
-            System.debug('---------------- Subs of Acc --------------' + key);
-            for (Account acct : subMap.get(key)) {
-                System.debug('*** Sub Name: ' + acct.Name + '. Id: '+acct.Id);
-            }
+        for (String key : childrenMap.keySet()) {
+
+            System.assertEquals(childrenMap.get(key), AccountHierarchy.getChildren(key));
 		}
     }
 }
