@@ -8,17 +8,22 @@ public class AccountHierarchy {
                     FROM Account
                     WHERE ParentId != NULL
                 ]);
+
                 List<Id> parentsAdd = new List<Id>();
+
                 for (Account a : getAccounts.values()){
                     if(!getAccounts.containsKey(a.ParentId)){
                         parentsAdd.add(a.ParentId);
                     }
                 }
-                getAccounts.putAll(new Map<Id, Account>([
-                    SELECT Id, ParentId, Name, (SELECT Id, ParentId, Name FROM ChildAccounts)
-                    FROM Account
-                    WHERE Id IN :parentsAdd
-                ]));
+
+                if (!parentsAdd.isEmpty()) {
+                    getAccounts.putAll(new Map<Id, Account>([
+                        SELECT Id, ParentId, Name, (SELECT Id, ParentId, Name FROM ChildAccounts)
+                        FROM Account
+                        WHERE Id IN :parentsAdd
+                    ]));
+                }
             }
 
             return getAccounts;
