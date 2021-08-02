@@ -3,36 +3,35 @@ public class StudentCourses {
     public String cName;
     public Decimal matchPercentage;
 
-    private static Map<String, List<Preference__c>> getPreferences {
-        get {
-            if (getPreferences == null) {
-                Map<Id, Preference__c> getStudents = new Map<Id, Preference__c>([
-                    SELECT Name, Student__r.Name, Skill__r.Name
-                    FROM Preference__c
-                ]);
+    public StudentCourses (String courseName, Decimal matchPercent){
 
-                Map<String, List<Preference__c>> getPreferences = new Map<String,List<Preference__c>>();
+        cName = courseName;
+        matchPercentage = matchPercent;
 
-                for (Preference__c pref : getStudents.values()) {
-                    if (!getPreferences.containsKey(pref.Student__r.Name)) {
-                        getPreferences.put(pref.Student__r.Name, new List<Preference__c> {pref});
-                    } else if (getPreferences.containsKey(pref.Student__r.Name)) {
-                        getPreferences.get(pref.Student__r.Name).add(pref);
-                    }
-                }
-            }
-
-            return getPreferences;
-
-        }
-        private set;
     }
 
-    private static Map<String, List<Discipline__c>> getDisciplines {
-        get {
-            if (getDisciplines == null) {
+    public static Map<String, List<Preference__c>> getPreferences() {
+        Map<Id, Preference__c> getStudents = new Map<Id, Preference__c>([
+            SELECT Id, Name, Student__r.Name, Skill__r.Name
+            FROM Preference__c
+        ]);
+
+        Map<String, List<Preference__c>> getPreferences = new Map<String,List<Preference__c>>();
+
+        for (Id pref : getStudents.keySet()) {
+            if (!getPreferences.containsKey(getStudents.get(pref).Student__r.Name)) {
+                getPreferences.put(getStudents.get(pref).Student__r.Name, new List<Preference__c> {getStudents.get(pref)});
+            } else if (getPreferences.containsKey(getStudents.get(pref).Student__r.Name)) {
+                getPreferences.get(getStudents.get(pref).Student__r.Name).add(getStudents.get(pref));
+            }
+        }
+
+        return getPreferences;
+    }
+
+    public static Map<String, List<Discipline__c>> getDisciplines() {
                 Map<Id, Discipline__c> getCourses = new Map<Id, Discipline__c>([
-                    SELECT Name, Course__r.Name, Skill__r.Name
+                    SELECT Id, Name, Course__r.Name, Skill__r.Name
                     FROM Discipline__c
                 ]);
 
@@ -45,53 +44,51 @@ public class StudentCourses {
                         getDisciplines.get(dis.Course__r.Name).add(dis);
                     }
                 }
-            }
 
             return getDisciplines;
-
-        }
-        private set;
     }
 
     public static Decimal getMatchPercent(List<Discipline__c> disciplines, List<Preference__c> preferences) {
-        Integer match;
+        Integer match = 0;
 
+        Set<String> discs = new Set<String>();
         for (Discipline__c dis : disciplines) {
-            for (Preference__c pref : preferences) {
-                if ((dis.Name.equals(pref.Name))&&(dis.Skill__r.Name.equals(pref.Skill__r.Name))) {
+            discs.add(dis.Name);
+        }
+
+        for (Preference__c pref : preferences) {
+            for (String ds : discs) {
+                if (pref.Name == ds) {
                     match++;
                 }
             }
         }
 
-        Decimal matchPercent = match/preferences.size();
+        Decimal matchPercent = (match/preferences.size())*100;
 
         return matchPercent;
-    }
-
-    public StudentCourses (String courseName, Decimal matchPercent){
-
-        cName = courseName;
-        matchPercentage = matchPercent;
-
     }
 
     public static Map<String, List<StudentCourses>> getMatchPercent(List<Student__c> students){
 
         Map<String, List<StudentCourses>> resultMap = new Map<String, List<StudentCourses>>();
+        Map<String, List<Preference__c>> preferences = getPreferences();
+        Map<String, List<Discipline__c>> disciplines = getDisciplines();
 
         for (Student__c student : students){
-            if (getPreferences.containsKey(student.name)) {
-                for (String course : getDisciplines.keySet()) {
-                    if (!resultMap.containsKey(student.name)) {
-                        resultMap.put(student.name, new List<StudentCourses>{
-                            new StudentCourses(course,
-                                getMatchPercent(getDisciplines.get(student.name), getPreferences.get(course)))
-                        });
-                    } else if (resultMap.containsKey(student.name)) {
-                        resultMap.get(student.name).add(new StudentCourses(
-                            course, getMatchPercent(getDisciplines.get(student.name), getPreferences.get(course))
-                        ));
+            for (String course : disciplines.keySet()) {
+                if (disciplines.containsKey(course)){
+                    if (preferences.containsKey(student.Name)){
+                        if (!resultMap.containsKey(student.Name)) {
+                            resultMap.put(student.Name, new List<StudentCourses>{
+                                new StudentCourses(course,
+                                    getMatchPercent(disciplines.get(course), preferences.get(student.Name)))
+                            });
+                        } else if (resultMap.containsKey(student.Name)) {
+                            resultMap.get(student.Name).add(new StudentCourses(
+                                course, getMatchPercent(disciplines.get(course), preferences.get(student.Name))
+                            ));
+                        }
                     }
                 }
             }
