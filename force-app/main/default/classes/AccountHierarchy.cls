@@ -55,7 +55,7 @@ public class AccountHierarchy {
     private static void addChildren(List<Account> children, Id accId){
         if (getAccounts.containsKey(accId)){
 
-            for(Account a : getAccounts.get(accId).ChildAccounts){
+            for (Account a : getAccounts.get(accId).ChildAccounts){
                 children.add(a);
                 addChildren(children, a.Id);
             }
@@ -89,7 +89,7 @@ public class AccountHierarchy {
 
         Map<Id, List<Account>> SubsTree = new Map<Id, List<Account>>();
 
-        for(Id subId : accounts){
+        for (Id subId : accounts){
             List<Account> children = new List<Account>(getChildren(subId));
             SubsTree.put(subId, children);
         }
