@@ -7,7 +7,7 @@ global class StudentCourses implements Comparable {
         get {
             if (getPreferences == null) {
                 Map<Id, Preference__c> getStudents = new Map<Id, Preference__c>([
-                    SELECT Name, Student__r.Name, Skill__c, Skill__r.Name
+                    SELECT Name, Student__r.Name, Skill__r.Name
                     FROM Preference__c
                 ]);
 
@@ -31,7 +31,7 @@ global class StudentCourses implements Comparable {
         get {
             if (getDisciplines == null) {
                 Map<Id, Discipline__c> getCourses = new Map<Id, Discipline__c>([
-                    SELECT Name, Course__r.Name, Skill__c, Skill__r.Name
+                    SELECT Name, Course__r.Name, Skill__r.Name
                     FROM Discipline__c
                 ]);
 
@@ -100,8 +100,10 @@ global class StudentCourses implements Comparable {
                     resultMap.put(student.Name, new List<StudentCourses>());
                     for (String course : getDisciplines.keySet()) {
                         resultMap.get(student.Name).add(
-                            new StudentCourses(course, getMatchPercent(getDisciplines.get(course), getPreferences.get(student.Name)))
-                        );
+                            new StudentCourses(course, getMatchPercent(
+                                getDisciplines.get(course),
+                                getPreferences.get(student.Name)
+                        )));
                     }
                     resultMap.get(student.Name).sort();
                 }
