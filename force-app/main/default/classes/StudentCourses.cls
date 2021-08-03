@@ -75,9 +75,9 @@ global class StudentCourses implements Comparable {
 
         Integer match = 0;
         List<Discipline__c> disc = New List<Discipline__c>(disciplines);
-        List<Preference__c> prefs = New List<Preference__c>(preferences);
+        List<Preference__c> prefers = New List<Preference__c>(preferences);
 
-        for (Preference__c pref : prefs) {
+        for (Preference__c pref : prefers) {
             for (Discipline__c dis : disc) {
                 if ((dis.Name.equals(pref.Name)) && (dis.Skill__r.Name.equals(pref.Skill__r.Name))) {
                     match++;
@@ -85,7 +85,7 @@ global class StudentCourses implements Comparable {
             }
         }
 
-        Double matchPercent = match / (prefs.size()) * 100;
+        Double matchPercent = match / (prefers.size()) * 100;
 
         return matchPercent;
     }
