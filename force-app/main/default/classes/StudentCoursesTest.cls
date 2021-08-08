@@ -1,5 +1,5 @@
 @isTest
-public class TestStudentCourses {
+public class StudentCoursesTest {
 
     @TestSetup
     static void testSetup() {
@@ -35,17 +35,6 @@ public class TestStudentCourses {
         };
         insert disciplines;
 
-    }
-
-    @isTest
-    static void testGetDisciplines() {
-        Integer everythingDisciplinesCount = ([SELECT COUNT() FROM Discipline__c WHERE Course__r.Name = 'Everything']);
-
-        Test.startTest();
-        Map<String, Set<Id>> everythingDisciplines = StudentCourses.getDisciplines;
-        Test.stopTest();
-
-        System.assertEquals(everythingDisciplinesCount, everythingDisciplines.get('Everything').size());
     }
 
     @isTest
