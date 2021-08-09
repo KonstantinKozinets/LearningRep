@@ -38,50 +38,6 @@ public class TestStudentCourses {
     }
 
     @isTest
-    static void testGetStudents() {
-        Integer studentsCount = ([SELECT COUNT() FROM Student__c]);
-
-        Test.startTest();
-        Map<Id, Student__c> students = StudentCourses.getStudents;
-        Test.stopTest();
-
-        System.assertEquals(studentsCount, students.size());
-    }
-
-    @isTest
-    static void testGetCourses() {
-        Integer coursesCount = ([SELECT COUNT() FROM Course__c]);
-
-        Test.startTest();
-        Map<Id, Course__c> courses = StudentCourses.getCourses;
-        Test.stopTest();
-
-        System.assertEquals(coursesCount, courses.size());
-    }
-
-    @isTest
-    static void testGetPreferences() {
-        Integer testPreferencesCount = ([SELECT COUNT() FROM Preference__c WHERE Student__r.Name = 'TestStudent']);
-
-        Test.startTest();
-        Integer testPreferences = StudentCourses.getPreferences.get('TestStudent').size();
-        Test.stopTest();
-
-        System.assertEquals(testPreferencesCount, testPreferences);
-    }
-
-    @isTest
-    static void testGetDisciplines() {
-        Integer everythingDisciplinesCount = ([SELECT COUNT() FROM Discipline__c WHERE Course__r.Name = 'Everything']);
-
-        Test.startTest();
-        Integer everythingDisciplines = StudentCourses.getDisciplines.get('Everything').size();
-        Test.stopTest();
-
-        System.assertEquals(everythingDisciplinesCount, everythingDisciplines);
-    }
-
-    @isTest
     static void testGetMatchPercentage() {
         Decimal d = 100;
         d.setScale(2);
@@ -95,6 +51,8 @@ public class TestStudentCourses {
 
         System.assertEquals(true, results.containsKey('TestStudent'));
         System.assertEquals(d, results.get('TestStudent').get(0).matchPercentage);
-        System.assertEquals((d / 2), results.get('TestStudent').get(1).matchPercentage);
+        System.assertEquals(
+            true, results.get('TestStudent').get(1).matchPercentage < results.get('TestStudent').get(0).matchPercentage
+        );
     }
 }
