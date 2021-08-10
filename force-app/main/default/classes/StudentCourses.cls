@@ -14,7 +14,6 @@ public class StudentCourses {
                                  FROM Preference__c
                                  WHERE Student__C IN :students)
                 ]);
-
                 getPreferences = new Map<String, Set<Id>>();
                 getDisciplines = new Map<String, Set<Id>>();
 

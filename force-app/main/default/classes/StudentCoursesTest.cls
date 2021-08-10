@@ -1,5 +1,5 @@
 @isTest
-public class TestStudentCourses {
+public class StudentCoursesTest {
 
     @TestSetup
     static void testSetup() {
