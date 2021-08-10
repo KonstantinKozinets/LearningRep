@@ -4,28 +4,13 @@ public class NewLeadTriggerHandler {
         get {
             if (getCampaignParents == null) {
                 getCampaignParents = new Map<String, Set<Campaign>>();
+                Date todaysDate = Date.today();
 
                 Map<Id, Campaign> getCampaigns = new Map<Id, Campaign> ([
                     SELECT Name, StartDate, EndDate, ParentId
                     FROM Campaign
-                    WHERE ParentId != NULL
+                    WHERE StartDate < :todaysDate AND EndDate > :todaysDate
                 ]);
-
-                List<Id> parents = new List<Id>();
-
-                for (Campaign c : getCampaigns.values()){
-                    if(!getCampaigns.containsKey(c.ParentId)){
-                        parents.add(c.ParentId);
-                    }
-                }
-
-                if (!parents.isEmpty()) {
-                    getCampaigns.putAll(new Map<Id, Campaign>([
-                        SELECT Name, StartDate, EndDate, ParentId
-                        FROM Campaign
-                        WHERE Id IN :parents
-                    ]));
-                }
 
                 for (Campaign camp : getCampaigns.values()) {
                     if (getCampaigns.containsKey(camp.ParentId)) {
