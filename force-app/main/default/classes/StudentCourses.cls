@@ -68,8 +68,8 @@ public class StudentCourses {
         Set<Id> disciplines = getDisciplines.get(course);
         Set<Id> preferences = getPreferences.get(student);
 
-        Set<Id> matches = disciplines.clone();
-        matches.retainAll(preferences);
+        Set<Id> matches = preferences.clone();
+        matches.retainAll(disciplines);
 
         Decimal matchPercent = matches.size() / preferences.size() * 100;
 
