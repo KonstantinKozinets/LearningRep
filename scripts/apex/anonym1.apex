@@ -1,1 +1,0 @@
-StringArrayTest.generateStringArray(5);
