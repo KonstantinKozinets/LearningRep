@@ -4,12 +4,13 @@ public class TestStudentCourses {
     @TestSetup
     static void testSetup() {
 
-        List<Student__c> students = new List<Student__c> { new Student__c(Name = 'TestStudent') };
-        insert students;
+        Student__c student = new Student__c(Name = 'TestStudent');
+        insert student;
 
         List<Course__c> courses = new List<Course__c> {
             new Course__c(Name = 'Everything'),
-            new Course__c(Name = 'Test')
+            new Course__c(Name = 'Test'),
+            new Course__c(Name = 'Nothing')
         };
         insert courses;
 
@@ -21,8 +22,8 @@ public class TestStudentCourses {
         insert skills;
 
         List<Preference__c> preferences = new List<Preference__c> {
-            new Preference__c(Student__c = students[0].Id, Skill__c = skills[0].Id),
-            new Preference__c(Student__c = students[0].Id, Skill__c = skills[2].Id)
+            new Preference__c(Student__c = student.Id, Skill__c = skills[0].Id),
+            new Preference__c(Student__c = student.Id, Skill__c = skills[2].Id)
         };
         insert preferences;
 
@@ -50,9 +51,9 @@ public class TestStudentCourses {
         Test.stopTest();
 
         System.assertEquals(true, results.containsKey('TestStudent'));
-        System.assertEquals(d, results.get('TestStudent').get(0).matchPercentage);
+        System.assertEquals(d, results.get('TestStudent')[0].matchPercentage);
         System.assertEquals(
-            true, results.get('TestStudent').get(1).matchPercentage < results.get('TestStudent').get(0).matchPercentage
+            true, results.get('TestStudent')[1].matchPercentage < results.get('TestStudent')[0].matchPercentage
         );
     }
 }
