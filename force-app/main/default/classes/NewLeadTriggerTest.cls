@@ -10,29 +10,54 @@ private class NewLeadTriggerTest {
         );
         insert parentCampaign;
 
-        List<Campaign> childCampaigns = new List<Campaign> {
-            new Campaign(
-                Name = '2021 August Campaign',
-                StartDate = Date.newInstance(2021, 8, 1),
-                EndDate = Date.newInstance(2021, 8, 31),
-                ParentId = parentCampaign.Id
-            ), new Campaign(
-                Name = '2021 September Campaign',
-                StartDate = Date.newInstance(2021, 9, 1),
-                EndDate = Date.newInstance(2021, 9, 30),
-                ParentId = parentCampaign.Id
-            )
-        };
-        insert childCampaigns;
+        Campaign augustCampaign = new Campaign(
+            Name = '2021 August Campaign',
+            StartDate = Date.newInstance(2021, 8, 1),
+            EndDate = Date.newInstance(2021, 8, 31),
+            ParentId = parentCampaign.Id
+        );
+
+        Campaign septemberCampaign = new Campaign(
+            Name = '2021 September Campaign',
+            StartDate = Date.newInstance(2021, 9, 1),
+            EndDate = Date.newInstance(2021, 9, 30),
+            ParentId = parentCampaign.Id
+        );
+
+        insert new List<Campaign>{ augustCampaign, septemberCampaign };
     }
 
     @isTest
     private static void testNewLeadTriggerHandler() {
-        Lead winLead = new Lead(LastName = 'Win Test', Company = 'Test', LeadSource = '2021 Campaign for Task');
+        Lead winLead = new Lead(LastName = 'Win Test', Company = 'Create Test', LeadSource = '2021 Campaign for Task');
         Lead loseLead = new Lead(LastName = 'Loss Test', Company = 'Test', LeadSource = 'Test');
 
         Test.startTest();
+        Lead existingLead = new Lead(LastName = 'Existing Test', Company = 'Update Test', LeadSource = '2021 Campaign for Task');
+
+        NewLeadTriggerFlag.setDoNotRunTrigger();
+        insert existingLead;
+        NewLeadTriggerFlag.setShouldRunTrigger();
+
+        Campaign septemberCampaign = [SELECT Name, StartDate, EndDate, ParentId
+                                      FROM Campaign
+                                      WHERE Name = '2021 September Campaign'];
+
+        System.assertEquals('2021 Campaign for Task', existingLead.LeadSource);
+
+        update existingLead;
+
+        Campaign excm = [SELECT Name
+                         FROM Campaign
+                         WHERE Id IN (SELECT CampaignId
+                                      FROM CampaignMember
+                                      WHERE LeadId = :existingLead.Id)];
+        String cm = excm.Name;
+
+        System.assertEquals('2021 August Campaign', cm);
+
         insert winLead;
+
         try {
             insert loseLead;
         } catch (DmlException e) {
@@ -43,6 +68,6 @@ private class NewLeadTriggerTest {
         Test.stopTest();
 
         List<CampaignMember> campaignMembers = [SELECT LeadId, CampaignId FROM CampaignMember];
-        System.assertEquals(1, campaignMembers.size());
+        System.assertEquals(2, campaignMembers.size());
     }
 }
