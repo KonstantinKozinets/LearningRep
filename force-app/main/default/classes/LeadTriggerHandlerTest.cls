@@ -1,5 +1,5 @@
 @isTest
-private class NewLeadTriggerTest {
+public class LeadTriggerHandlerTest {
 
     @testSetup
     private static void testSetup() {
@@ -28,16 +28,16 @@ private class NewLeadTriggerTest {
     }
 
     @isTest
-    private static void testNewLeadTriggerHandler() {
+    private static void testLeadTriggerHandler() {
         Lead winLead = new Lead(LastName = 'Win Test', Company = 'Create Test', LeadSource = '2021 Campaign for Task');
         Lead loseLead = new Lead(LastName = 'Loss Test', Company = 'Test', LeadSource = 'Test');
 
         Test.startTest();
         Lead existingLead = new Lead(LastName = 'Existing Test', Company = 'Update Test', LeadSource = '2021 Campaign for Task');
 
-        NewLeadTriggerFlag.setDoNotRunTrigger();
+        LeadTriggerHelper.setDoNotRunTrigger();
         insert existingLead;
-        NewLeadTriggerFlag.setShouldRunTrigger();
+        LeadTriggerHelper.setShouldRunTrigger();
 
         Campaign septemberCampaign = [SELECT Name, StartDate, EndDate, ParentId
                                       FROM Campaign

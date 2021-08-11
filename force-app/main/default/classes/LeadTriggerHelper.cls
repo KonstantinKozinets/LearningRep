@@ -1,5 +1,5 @@
-public class NewLeadTriggerFlag {
-    public static Boolean doNotRunTrigger = false;
+public class LeadTriggerHelper {
+	public static Boolean doNotRunTrigger = false;
 
     public static void setDoNotRunTrigger(){
         doNotRunTrigger = true;

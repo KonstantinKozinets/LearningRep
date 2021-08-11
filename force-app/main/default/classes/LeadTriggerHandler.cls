@@ -1,5 +1,4 @@
-public class NewLeadTriggerHandler {
-
+public class LeadTriggerHandler {
     private static Map<String, Set<Campaign>> getCampaignParents {
         get {
             if (getCampaignParents == null) {
@@ -26,8 +25,9 @@ public class NewLeadTriggerHandler {
         private set;
     }
 
-    public static Map<Lead, CampaignMember> updateLeads(Set<Lead> leadsToUpdate) {
+    public static void updateLeads(Set<Lead> leadsToUpdate) {
         Map<Lead, CampaignMember> connections = new Map<Lead, CampaignMember>();
+        Integer errors = 0;
         for (Lead lead : leadsToUpdate) {
             if (getCampaignParents.containsKey(lead.LeadSource)) {
                 for (Campaign camp : getCampaignParents.get(lead.LeadSource)) {
@@ -38,7 +38,15 @@ public class NewLeadTriggerHandler {
             }
         }
 
-        return connections;
-    }
+        for (Lead l : leadsToUpdate) {
+            if (!connections.containsKey(l)) {
+                l.addError('Campaign not exists for this LeadSource');
+                errors++;
+            }
+        }
 
+        if (errors == Integer.valueOf(0)) {
+            insert connections.values();
+        }
+    }
 }
