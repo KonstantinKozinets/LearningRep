@@ -47,14 +47,14 @@ public class LeadTriggerHandlerTest {
 
         update existingLead;
 
-        Campaign excm = [SELECT Name
-                         FROM Campaign
-                         WHERE Id IN (SELECT CampaignId
-                                      FROM CampaignMember
-                                      WHERE LeadId = :existingLead.Id)];
-        String cm = excm.Name;
+        Campaign existingCampaignMember = [SELECT Name
+                                           FROM Campaign
+                                           WHERE Id IN (SELECT CampaignId
+                                                        FROM CampaignMember
+                                                        WHERE LeadId = :existingLead.Id)];
+        String campaignMemberName = existingCampaignMember.Name;
 
-        System.assertEquals('2021 August Campaign', cm);
+        System.assertEquals('2021 August Campaign', campaignMemberName);
 
         insert winLead;
 

@@ -4,19 +4,17 @@ public class LeadTriggerHandler {
             CampaignParents = new Map<String, Set<Campaign>>();
 
             Map<Id, Campaign> getCampaigns = new Map<Id, Campaign> ([
-                SELECT Name, StartDate, EndDate, ParentId
+                SELECT Name, StartDate, EndDate, Parent.Name
                 FROM Campaign
                 WHERE CALENDAR_YEAR(StartDate) IN :createdDatesYears AND
                     CALENDAR_MONTH(StartDate) IN :createdDatesMonths
             ]);
 
             for (Campaign camp : getCampaigns.values()) {
-                if (getCampaigns.containsKey(camp.ParentId)) {
-                    if (!CampaignParents.containsKey(getCampaigns.get(camp.ParentId).Name)) {
-                        CampaignParents.put(getCampaigns.get(camp.ParentId).Name, new Set<Campaign> { camp });
-                    } else if (CampaignParents.containsKey(getCampaigns.get(camp.ParentId).Name)) {
-                        CampaignParents.get(getCampaigns.get(camp.ParentId).Name).add(camp);
-                    }
+                if (!CampaignParents.containsKey(camp.Parent.Name)) {
+                    CampaignParents.put(camp.Parent.Name, new Set<Campaign> { camp });
+                } else if (CampaignParents.containsKey(camp.Parent.Name)) {
+                    CampaignParents.get(camp.Parent.Name).add(camp);
                 }
             }
         }
@@ -30,12 +28,16 @@ public class LeadTriggerHandler {
     public static void updateLeads(List<Lead> leadsToUpdate) {
         Map<Lead, CampaignMember> connections = new Map<Lead, CampaignMember>();
         Integer errors = 0;
+        createdDatesYears = new Set<Integer>();
+        createdDatesMonths = new Set<Integer>();
 
         for (Lead l : leadsToUpdate) {
             createdDatesYears.add(l.CreatedDate.date().year());
             createdDatesMonths.add(l.CreatedDate.date().month());
         }
+
         campaignParents = getCampaignParents(createdDatesYears, createdDatesMonths);
+
         for (Lead lead : leadsToUpdate) {
             if (campaignParents.containsKey(lead.LeadSource)) {
                 for (Campaign camp : campaignParents.get(lead.LeadSource)) {
