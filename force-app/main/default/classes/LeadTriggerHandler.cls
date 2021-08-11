@@ -25,7 +25,7 @@ public class LeadTriggerHandler {
         private set;
     }
 
-    public static void updateLeads(Set<Lead> leadsToUpdate) {
+    public static void updateLeads(List<Lead> leadsToUpdate) {
         Map<Lead, CampaignMember> connections = new Map<Lead, CampaignMember>();
         Integer errors = 0;
         for (Lead lead : leadsToUpdate) {
