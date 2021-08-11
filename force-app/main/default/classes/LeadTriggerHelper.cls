@@ -1,15 +1,11 @@
 public class LeadTriggerHelper {
-	public static Boolean doNotRunTrigger = false;
-
-    public static void setDoNotRunTrigger(){
-        doNotRunTrigger = true;
-    }
-
-    public static void setShouldRunTrigger(){
-        doNotRunTrigger = false;
-    }
-
-    public static Boolean shouldRunTrigger() {
-        return !doNotRunTrigger;
+	public static Boolean doNotRunTrigger {
+        get {
+            if (doNotRunTrigger == null) {
+                doNotRunTrigger = false;
+            }
+            return doNotRunTrigger;
+        }
+        set;
     }
 }

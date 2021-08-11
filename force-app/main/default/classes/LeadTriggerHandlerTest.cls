@@ -35,9 +35,9 @@ public class LeadTriggerHandlerTest {
         Test.startTest();
         Lead existingLead = new Lead(LastName = 'Existing Test', Company = 'Update Test', LeadSource = '2021 Campaign for Task');
 
-        LeadTriggerHelper.setDoNotRunTrigger();
+        LeadTriggerHelper.doNotRunTrigger = true;
         insert existingLead;
-        LeadTriggerHelper.setShouldRunTrigger();
+        LeadTriggerHelper.doNotRunTrigger = false;
 
         Campaign septemberCampaign = [SELECT Name, StartDate, EndDate, ParentId
                                       FROM Campaign

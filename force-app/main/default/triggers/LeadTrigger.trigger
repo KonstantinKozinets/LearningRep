@@ -1,5 +1,7 @@
 trigger LeadTrigger on Lead (after insert, after update) {
-    if(LeadTriggerHelper.shouldRunTrigger()){
-        LeadTriggerHandler.updateLeads(Trigger.new);
+    if ((Trigger.isAfter && Trigger.isInsert) || (Trigger.isAfter && Trigger.isUpdate)) {
+        if (!LeadTriggerHelper.doNotRunTrigger){
+            LeadTriggerHandler.updateLeads(Trigger.new);
+        }
     }
 }
