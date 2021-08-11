@@ -26,13 +26,9 @@ public class NewLeadTriggerHandler {
         private set;
     }
 
-    private static Set<Id> leadIds { get; set; }
-
     public static Map<Lead, CampaignMember> updateLeads(Set<Lead> leadsToUpdate) {
         Map<Lead, CampaignMember> connections = new Map<Lead, CampaignMember>();
-        leadIds = new Set<Id>();
         for (Lead lead : leadsToUpdate) {
-            leadIds.add(lead.Id);
             if (getCampaignParents.containsKey(lead.LeadSource)) {
                 for (Campaign camp : getCampaignParents.get(lead.LeadSource)) {
                     if (camp.StartDate <= lead.CreatedDate && lead.CreatedDate <= camp.EndDate) {
