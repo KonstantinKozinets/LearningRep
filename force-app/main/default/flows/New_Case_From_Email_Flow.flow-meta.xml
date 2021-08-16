@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Case_status_is_Closed</name>
+        <label>Case status is Closed</label>
+        <locationX>314</locationX>
+        <locationY>745</locationY>
+        <actionName>Case.Case_status_closed</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>is_Case_reason_is_Equipment</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>CasefromProcess.Id</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <apiVersion>52.0</apiVersion>
+    <assignments>
+        <name>Case_status_to_Closed</name>
+        <label>Case status to Closed</label>
+        <locationX>315</locationX>
+        <locationY>594</locationY>
+        <assignmentItems>
+            <assignToReference>CasefromProcess.Status</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Closed</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Case_status_is_Closed</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Case_status_to_Working</name>
+        <label>Case status to Working</label>
+        <locationX>559</locationX>
+        <locationY>606</locationY>
+        <assignmentItems>
+            <assignToReference>CasefromProcess.Status</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Working</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>is_Case_reason_is_Equipment</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Case_to_Account_assignment</name>
+        <label>Case to Account assignment</label>
+        <locationX>559</locationX>
+        <locationY>368</locationY>
+        <assignmentItems>
+            <assignToReference>CasefromProcess.AccountId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Account_with_Case_Email.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Case_status_to_Working</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Subject_to_update</name>
+        <label>Subject to update</label>
+        <locationX>78</locationX>
+        <locationY>1156</locationY>
+        <assignmentItems>
+            <assignToReference>CasefromProcess.Subject</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>SubjectUpdate</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_created_Case</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>is_Account_exists</name>
+        <label>is Account exists</label>
+        <locationX>300</locationX>
+        <locationY>368</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Account_exists</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Account_with_Case_Email.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Case_to_Account_assignment</targetReference>
+            </connector>
+            <label>Account exists</label>
+        </rules>
+        <rules>
+            <name>Account_does_not_exists</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Account_with_Case_Email.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Case_status_to_Closed</targetReference>
+            </connector>
+            <label>Account does not exists</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>is_Case_reason_is_Equipment</name>
+        <label>is Case reason is Equipment</label>
+        <locationX>306</locationX>
+        <locationY>932</locationY>
+        <defaultConnector>
+            <targetReference>Delete_if_not_Case_reason_Equipment</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>reason is not Equipment</defaultConnectorLabel>
+        <rules>
+            <name>reason_is_Equipment</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>CasefromProcess.Reason</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Equipment Complexity</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>CasefromProcess.Reason</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Equipment Design</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>is_Subject_null</targetReference>
+            </connector>
+            <label>reason is Equipment</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>is_Subject_null</name>
+        <label>is Subject null</label>
+        <locationX>306</locationX>
+        <locationY>1153</locationY>
+        <defaultConnector>
+            <targetReference>Update_created_Case</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Subject is not Null</defaultConnectorLabel>
+        <rules>
+            <name>Subject_is_Null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>CasefromProcess.Subject</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Subject_to_update</targetReference>
+            </connector>
+            <label>Subject is Null</label>
+        </rules>
+    </decisions>
+    <description>last version (update questions), not updating, subject formula</description>
+    <formulas>
+        <name>SubjectUpdate</name>
+        <dataType>String</dataType>
+        <expression>IF((FIND(&apos;@&apos;,{!CasefromProcess.ContactEmail}) &lt;= 10), (LEFT({!CasefromProcess.ContactEmail},
+(FIND(&apos;@&apos;, {!CasefromProcess.ContactEmail})-1))), (LEFT({!CasefromProcess.ContactEmail}, 10))) + NULLVALUE( {!Get_Account_with_Case_Email.Name} , &apos;&apos;)</expression>
+    </formulas>
+    <interviewLabel>New Case From Email Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>New Case From Email Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>FREE_FORM_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordDeletes>
+        <name>Delete_if_not_Case_reason_Equipment</name>
+        <label>Delete if not Case reason Equipment</label>
+        <locationX>50</locationX>
+        <locationY>934</locationY>
+        <inputReference>CasefromProcess</inputReference>
+    </recordDeletes>
+    <recordLookups>
+        <name>Get_Account_with_Case_Email</name>
+        <label>Get Account with Case Email</label>
+        <locationX>310</locationX>
+        <locationY>202</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>is_Account_exists</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Account_Email__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>CasefromProcess.Source:EmailMessage.FromAddress</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Account</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_created_Case</name>
+        <label>Update created Case</label>
+        <locationX>197</locationX>
+        <locationY>1344</locationY>
+        <inputReference>CasefromProcess</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>183</locationX>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Get_Account_with_Case_Email</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>CasefromProcess</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <name>test</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue>tetttttt</stringValue>
+        </value>
+    </variables>
+</Flow>

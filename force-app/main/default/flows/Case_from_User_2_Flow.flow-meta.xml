@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Case_status_is_Closed</name>
+        <label>Case status is Closed</label>
+        <locationX>374</locationX>
+        <locationY>197</locationY>
+        <actionName>Case.Case_status_closed</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>get_Account_for_Case</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>CasefromUser2.Id</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <actionCalls>
+        <name>New_Opportunity_for_Case</name>
+        <label>New Opportunity for Case</label>
+        <locationX>171</locationX>
+        <locationY>1214</locationY>
+        <actionName>NewOpportunity</actionName>
+        <actionType>quickAction</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>CloseDate</name>
+            <value>
+                <elementReference>DateForOpportunity</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>Name</name>
+            <value>
+                <elementReference>CasefromUser2.Subject</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>StageName</name>
+            <value>
+                <stringValue>prospecting</stringValue>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <apiVersion>52.0</apiVersion>
+    <assignments>
+        <name>new_Subject_assignment</name>
+        <label>new Subject assignment</label>
+        <locationX>71</locationX>
+        <locationY>824</locationY>
+        <assignmentItems>
+            <assignToReference>CasefromUser2.Subject</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>TextForSubject</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>New_Opportunity_for_Case</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Case_status_is_not_Closed</name>
+        <label>Case status is not Closed</label>
+        <locationX>166</locationX>
+        <locationY>194</locationY>
+        <defaultConnector>
+            <targetReference>get_Account_for_Case</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Status is not Closed</defaultConnectorLabel>
+        <rules>
+            <name>Status_is_Closed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>CasefromUser2.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Case_status_is_Closed</targetReference>
+            </connector>
+            <label>Status is Closed</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>is_Account_prospect_with_low_priority</name>
+        <label>is Account prospect with low priority</label>
+        <locationX>270</locationX>
+        <locationY>607</locationY>
+        <defaultConnector>
+            <targetReference>is_Subject_null</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Do not delete</defaultConnectorLabel>
+        <rules>
+            <name>Delete_Case</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>get_Account_for_Case.CustomerPriority__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Low</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>get_Account_for_Case.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Prospect</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Case_deleting</targetReference>
+            </connector>
+            <label>Delete Case</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>is_Subject_null</name>
+        <label>is Subject null</label>
+        <locationX>263</locationX>
+        <locationY>827</locationY>
+        <defaultConnector>
+            <targetReference>New_Opportunity_for_Case</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Subject is not Null</defaultConnectorLabel>
+        <rules>
+            <name>Subject_is_Null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>CasefromUser2.Subject</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>new_Subject_assignment</targetReference>
+            </connector>
+            <label>Subject is Null</label>
+        </rules>
+    </decisions>
+    <description>new case for User 2</description>
+    <formulas>
+        <name>DateForOpportunity</name>
+        <dataType>Date</dataType>
+        <expression>{!CasefromUser2.CreatedDate} + 90</expression>
+    </formulas>
+    <formulas>
+        <name>TextForSubject</name>
+        <dataType>String</dataType>
+        <expression>IF((FIND(&apos;@&apos;,{!CasefromUser2.ContactEmail}) &lt;= 10), (LEFT({!CasefromUser2.ContactEmail},
+(FIND(&apos;@&apos;, {!CasefromUser2.ContactEmail})-1))), (LEFT({!CasefromUser2.ContactEmail}, 10))) + NULLVALUE( {!get_Account_for_Case.Name} , &apos;&apos;)</expression>
+    </formulas>
+    <interviewLabel>Case from User 2 Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case from User 2 Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>FREE_FORM_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordDeletes>
+        <name>Case_deleting</name>
+        <label>Delete Case</label>
+        <locationX>484</locationX>
+        <locationY>606</locationY>
+        <inputReference>CasefromUser2</inputReference>
+    </recordDeletes>
+    <recordLookups>
+        <name>get_Account_for_Case</name>
+        <label>get Account for Case</label>
+        <locationX>273</locationX>
+        <locationY>455</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>is_Account_prospect_with_low_priority</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>CasefromUser2.Account.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Account</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Case_status_is_not_Closed</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>CasefromUser2</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+</Flow>

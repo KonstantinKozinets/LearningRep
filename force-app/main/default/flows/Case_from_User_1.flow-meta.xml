@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Case_status_is_closed</name>
+        <label>Case status is closed</label>
+        <locationX>537</locationX>
+        <locationY>227</locationY>
+        <actionName>Case.Case_status_closed</actionName>
+        <actionType>emailAlert</actionType>
+        <connector>
+            <targetReference>Account_from_Case</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>SObjectRowId</name>
+            <value>
+                <elementReference>CasefromProcess.Id</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <actionCalls>
+        <description>Priority – low</description>
+        <name>new_Task_from_Case</name>
+        <label>new Task from Case</label>
+        <locationX>267</locationX>
+        <locationY>1041</locationY>
+        <actionName>NewTask</actionName>
+        <actionType>quickAction</actionType>
+        <connector>
+            <targetReference>Case_check_after_Task</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>OwnerId</name>
+            <value>
+                <elementReference>CasefromProcess.Owner:User.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>Status</name>
+            <value>
+                <stringValue>in progress</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>Subject</name>
+            <value>
+                <stringValue>Task - {!CasefromProcess.Subject}</stringValue>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <apiVersion>52.0</apiVersion>
+    <assignments>
+        <name>Status_to_Escalated</name>
+        <label>Status to Escalated</label>
+        <locationX>50</locationX>
+        <locationY>1186</locationY>
+        <assignmentItems>
+            <assignToReference>CasefromProcess.Status</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Escalated</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Subject_Update</name>
+        <label>Subject Update</label>
+        <locationX>176</locationX>
+        <locationY>842</locationY>
+        <assignmentItems>
+            <assignToReference>CasefromProcess.Subject</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>textforsubject</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>new_Task_from_Case</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Account_Customer_priority_and_Type</name>
+        <label>Account Customer priority and Type</label>
+        <locationX>381</locationX>
+        <locationY>608</locationY>
+        <defaultConnector>
+            <targetReference>is_Subject_Null</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Account is OK</defaultConnectorLabel>
+        <rules>
+            <name>to_Delete</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Account_from_Case.CustomerPriority__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Low</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Account_from_Case.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Prospect</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>delete_Case</targetReference>
+            </connector>
+            <label>to Delete</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Case_check_after_Task</name>
+        <label>Case check after Task</label>
+        <locationX>249</locationX>
+        <locationY>1187</locationY>
+        <defaultConnectorLabel>stop</defaultConnectorLabel>
+        <rules>
+            <name>to_Escalated</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>CasefromProcess.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Working</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>CasefromProcess.Priority</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>Low</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Status_to_Escalated</targetReference>
+            </connector>
+            <label>to Escalated</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Case_status_Closed_Decision</name>
+        <label>Case status Closed Decision</label>
+        <locationX>256</locationX>
+        <locationY>226</locationY>
+        <defaultConnector>
+            <targetReference>Account_from_Case</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Status_is_Closed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>CasefromProcess.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closed</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Case_status_is_closed</targetReference>
+            </connector>
+            <label>Status is Closed</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>is_Subject_Null</name>
+        <label>is Subject Null</label>
+        <locationX>404</locationX>
+        <locationY>863</locationY>
+        <defaultConnector>
+            <targetReference>new_Task_from_Case</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Subject is not Null</defaultConnectorLabel>
+        <rules>
+            <name>Subject_is_Null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>CasefromProcess.Subject</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Subject_Update</targetReference>
+            </connector>
+            <label>Subject is Null</label>
+        </rules>
+    </decisions>
+    <description>case for user one</description>
+    <formulas>
+        <name>textforsubject</name>
+        <dataType>String</dataType>
+        <expression>IF((FIND(&apos;@&apos;,{!CasefromProcess.ContactEmail}) &lt;= 10), (LEFT({!CasefromProcess.ContactEmail},
+(FIND(&apos;@&apos;, {!CasefromProcess.ContactEmail})-1))), (LEFT({!CasefromProcess.ContactEmail}, 10))) + NULLVALUE( {!Account_from_Case.Name} , &apos;&apos;)</expression>
+    </formulas>
+    <interviewLabel>Case from User 1 {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Case from User 1</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>FREE_FORM_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordDeletes>
+        <name>delete_Case</name>
+        <label>delete Case</label>
+        <locationX>213</locationX>
+        <locationY>608</locationY>
+        <inputReference>CasefromProcess</inputReference>
+    </recordDeletes>
+    <recordLookups>
+        <name>Account_from_Case</name>
+        <label>Account from Case</label>
+        <locationX>389</locationX>
+        <locationY>454</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Account_Customer_priority_and_Type</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>CasefromProcess.AccountId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Account</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>140</locationX>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Case_status_Closed_Decision</targetReference>
+        </connector>
+    </start>
+    <status>Draft</status>
+    <variables>
+        <name>CasefromProcess</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+    <variables>
+        <name>TaskforCase</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Task</objectType>
+    </variables>
+</Flow>
