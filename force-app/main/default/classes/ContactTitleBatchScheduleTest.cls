@@ -6,7 +6,7 @@ private class ContactTitleBatchScheduleTest {
         List<Contact> contacts = new List<Contact>();
 
         for (Integer i = 0; i < 50; i++) {
-            contacts.add(new Contact(FirstName = 'FirstJob', LastName = 'LastJob'));
+            contacts.add(new Contact(FirstName = 'FirstJob', LastName = 'SecondJob'));
         }
 
         insert contacts;
@@ -14,18 +14,17 @@ private class ContactTitleBatchScheduleTest {
 
     @isTest
     static void testBatch() {
-        String sch =
-            DateTime.now().second() +
-            ' ' + DateTime.now().addMinutes(20).minute() +
-            ' 0/1 1/1 * ? *';
-        ContactTitleBatch updateContactsBatch = new ContactTitleBatch(sch);
         Test.startTest();
+        ContactTitleBatch updateContactsBatch = new ContactTitleBatch();
         Id batchId = Database.executeBatch(updateContactsBatch, 50);
         Test.stopTest();
 
-        for (Contact c : [SELECT Title FROM Contact]) {
-            System.assertEquals('Async Apex', c.Title);
-        }
+        for (Contact c : [
+            SELECT Title
+            FROM Contact
+            WHERE FirstName = 'FirstJob' AND LastName = 'SecondJob'
+        ]) { System.assertEquals('Async Apex', c.Title); }
+
         System.assertEquals(
             'Aborted',
             [SELECT Status FROM AsyncApexJob WHERE Id = :batchId].Status
@@ -36,8 +35,7 @@ private class ContactTitleBatchScheduleTest {
     @isTest
     static void testBatchCallDelay() {
         String sch =
-            DateTime.now().second() +
-            ' ' + DateTime.now().addMinutes(20).minute() +
+            '0 ' + DateTime.now().addMinutes(20).minute() +
             ' 0/1 1/1 * ? *';
 
         Test.startTest();
@@ -48,11 +46,14 @@ private class ContactTitleBatchScheduleTest {
             System.assertEquals(null, c.Title);
         }
 
-        System.assertEquals(DateTime.now().addMinutes(20),[
-            SELECT NextFireTime
-            FROM CronTrigger
-            WHERE CronExpression = :sch
-            LIMIT 1
-        ].NextFireTime);
+        System.assertEquals(
+            DateTime.now().addMinutes(19).addSeconds(60 - DateTime.now().second()),
+            [
+                SELECT NextFireTime
+                FROM CronTrigger
+                WHERE CronExpression = :sch
+                LIMIT 1
+            ].NextFireTime
+        );
     }
 }

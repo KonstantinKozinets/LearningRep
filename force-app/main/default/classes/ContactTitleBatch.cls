@@ -1,6 +1,6 @@
-public  class ContactTitleBatch implements Database.Batchable<sObject>{
+public  class ContactTitleBatch implements Database.Batchable<SObject> {
 
-    public Database.QueryLocator start(Database.BatchableContext BC){
+    public Database.QueryLocator start(Database.BatchableContext bc) {
         return Database.getQueryLocator(
             'SELECT ID, FirstName, LastName, Title ' +
             'FROM Contact ' +
@@ -8,20 +8,20 @@ public  class ContactTitleBatch implements Database.Batchable<sObject>{
         );
     }
 
-    public void execute(Database.BatchableContext bc, List<Contact> scope){
-        for(Contact contact : scope){
+    public void execute(Database.BatchableContext bc, List<Contact> scope) {
+        for(Contact contact : scope) {
             contact.Title = 'Async Apex';
         }
 
         update scope;
     }
 
-    public void finish(Database.BatchableContext BC){
-
+    public void finish(Database.BatchableContext bc) {
 
         Id jobId = [
             SELECT Id
-            FROM CronTrigger
+            FROM AsyncApexJob
+            WHERE Id = :bc.getJobId()
             LIMIT 1
         ].Id;
 
