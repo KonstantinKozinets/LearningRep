@@ -6,7 +6,7 @@ private class ChainJobScheduleTest {
         Test.startTest();
         Id jobId = System.schedule(
             'ScheduledJobTest',
-            '0 0 0 15 3 ? 2022',
+            '0 0 0 15 3 ? ' + Datetime.now().addYears(1).year(),
             new ChainJobSchedule()
         );
         Test.stopTest();
@@ -18,9 +18,9 @@ private class ChainJobScheduleTest {
     static void testChainFirstJob() {
         ContactFirstName cf = new ContactFirstName();
 
-        test.startTest();
+        Test.startTest();
         System.enqueueJob(cf);
-        test.stopTest();
+        Test.stopTest();
 
         for (Contact con : cf.contacts) {
             System.assertEquals('FirstJob', con.FirstName);
@@ -31,6 +31,7 @@ private class ChainJobScheduleTest {
     @isTest
     static void testChainSecondJob() {
         List<Contact> contacts = new List<Contact>();
+
         for (Integer i = 0; i < 200; i++) {
             contacts.add(new Contact(FirstName = 'FirstJob', LastName = 'Test' + i));
         }
@@ -39,10 +40,9 @@ private class ChainJobScheduleTest {
         System.enqueueJob(new ContactSecondName(contacts));
         Test.stopTest();
 
-        System.assertEquals(200, [
-            SELECT COUNT()
-            FROM Contact
-            WHERE FirstName = 'FirstJob' AND LastName = 'SecondJob'
-        ]);
+        System.assertEquals(
+            200,
+            [SELECT COUNT() FROM Contact WHERE FirstName = 'FirstJob' AND LastName = 'SecondJob']
+        );
     }
 }

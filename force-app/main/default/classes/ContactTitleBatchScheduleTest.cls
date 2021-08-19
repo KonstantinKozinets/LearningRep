@@ -15,28 +15,28 @@ private class ContactTitleBatchScheduleTest {
     @isTest
     static void testBatch() {
         Test.startTest();
-        ContactTitleBatch updateContactsBatch = new ContactTitleBatch();
-        Id batchId = Database.executeBatch(updateContactsBatch, 50);
+        Id batchId = Database.executeBatch(new ContactTitleBatch(), 50);
         Test.stopTest();
 
-        for (Contact c : [
+        List<Contact> contacts = [
             SELECT Title
             FROM Contact
             WHERE FirstName = 'FirstJob' AND LastName = 'SecondJob'
-        ]) { System.assertEquals('Async Apex', c.Title); }
+        ];
+
+        for (Contact c : contacts) {
+            System.assertEquals('Async Apex', c.Title);
+        }
 
         System.assertEquals(
             'Aborted',
             [SELECT Status FROM AsyncApexJob WHERE Id = :batchId].Status
         );
-
     }
 
     @isTest
     static void testBatchCallDelay() {
-        String sch =
-            '0 ' + DateTime.now().addMinutes(20).minute() +
-            ' 0/1 1/1 * ? *';
+        String sch = '0 ' + DateTime.now().addMinutes(20).minute() + ' 0/1 1/1 * ? *';
 
         Test.startTest();
         CallBatch.call();
@@ -48,12 +48,7 @@ private class ContactTitleBatchScheduleTest {
 
         System.assertEquals(
             DateTime.now().addMinutes(19).addSeconds(60 - DateTime.now().second()),
-            [
-                SELECT NextFireTime
-                FROM CronTrigger
-                WHERE CronExpression = :sch
-                LIMIT 1
-            ].NextFireTime
+            [SELECT NextFireTime FROM CronTrigger WHERE CronExpression = :sch LIMIT 1].NextFireTime
         );
     }
 }

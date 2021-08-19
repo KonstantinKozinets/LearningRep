@@ -1,11 +1,7 @@
-global class StartScheduledJobs {
-    public static String jobID {get; set;}
+public class StartScheduledJobs {
 
     @InvocableMethod
-    public static void StartScheduledJobs() {
-        ScheduledJob schJob = new ScheduledJob();
-        String sch = '0 0 0/1 1/1 * ? *';
-        jobID = System.schedule('Create Orders for Contacts', sch, schJob);
+    public static void startScheduledJobs() {
+        System.schedule('Create Orders for Contacts', '0 0 0/1 1/1 * ? *', new ScheduledJob());
     }
-
 }

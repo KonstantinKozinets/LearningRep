@@ -1,6 +1,6 @@
 @isTest
 private class ScheduledJobTest {
-    private static String cron = '0 0 0 15 3 ? 2022';
+    private static String cron = '0 0 0 15 3 ? ' + Datetime.now().addYears(1).year();
 
     @TestSetup
     private static void testSetup() {
@@ -17,26 +17,19 @@ private class ScheduledJobTest {
 
         Test.startTest();
 
-        StartScheduledJobs.StartScheduledJobs();
+        StartScheduledJobs.startScheduledJobs();
         System.assertEquals(1, [SELECT COUNT() FROM AsyncApexJob WHERE Status = 'Queued']);
         StopScheduledJob.stopScheduledJob();
         System.assertEquals(1, [SELECT COUNT() FROM AsyncApexJob WHERE Status = 'Aborted']);
 
         Test.stopTest();
-
-
     }
 
     @isTest
     private static void testScheduledJobOrders() {
         Test.startTest();
 
-        String jobId = System.schedule(
-            'Order for Contacts',
-            cron,
-            new ScheduledJob()
-        );
-
+        System.schedule('Order for Contacts', cron, new ScheduledJob());
         System.assertEquals(
             0,
             [SELECT COUNT() FROM Custom_Order__c],
@@ -45,11 +38,9 @@ private class ScheduledJobTest {
 
         Test.stopTest();
 
-        for (Contact c : [SELECT Id FROM Contact]) {
-            System.assertEquals(
-                10,
-                [SELECT COUNT() FROM Custom_Order__c WHERE Contact__c = : c.Id]
-            );
-        }
+        System.assertEquals(
+            20,
+            [SELECT COUNT() FROM Custom_Order__c WHERE Contact__c = :new List<Contact>([SELECT Id FROM Contact])]
+        );
     }
 }

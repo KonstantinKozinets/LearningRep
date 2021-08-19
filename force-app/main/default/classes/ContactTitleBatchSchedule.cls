@@ -1,7 +1,6 @@
-global class ContactTitleBatchSchedule implements Schedulable{
+public class ContactTitleBatchSchedule implements Schedulable{
 
-    global void execute(SchedulableContext ctx) {
-        ContactTitleBatch updateContactsBatch = new ContactTitleBatch();
-        Id batchId = Database.executeBatch(updateContactsBatch, 50);
+    public void execute(SchedulableContext ctx) {
+        Database.executeBatch(new ContactTitleBatch(), 50);
     }
 }

@@ -24,7 +24,7 @@ private class CustomOrderCleanerTest {
 
     @isTest
     private static void testCustomOrderCleaner() {
-        String sch = '0 0 0 15 3 ? 2022';
+        String sch = '0 0 0 15 3 ? ' + Datetime.now().addYears(1).year();
         CustomOrderCleaner cleaner = new CustomOrderCleaner();
 
         Test.startTest();

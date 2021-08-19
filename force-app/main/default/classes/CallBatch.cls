@@ -1,10 +1,9 @@
 public class CallBatch {
     public static void call() {
-        String sch = (
-            '0 ' + DateTime.now().addMinutes(20).minute() +
-            ' 0/1 1/1 * ? *'
+        System.schedule(
+            'Updating Contacts Batch',
+            '0 ' + DateTime.now().addMinutes(20).minute() + ' 0/1 1/1 * ? *',
+            new ContactTitleBatchSchedule()
         );
-        ContactTitleBatchSchedule batchSchedule = new ContactTitleBatchSchedule();
-        String jobID = System.schedule('Updating Contacts Batch', sch, batchSchedule);
     }
 }

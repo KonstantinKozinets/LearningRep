@@ -1,14 +1,10 @@
-global class ScheduledJob implements Schedulable {
+public class ScheduledJob implements Schedulable {
 
-    global void execute(SchedulableContext ctx) {
-        List<Contact> contacts = [
-            SELECT Id, Name
-            FROM Contact
-        ];
-        createOrders(contacts);
+    public void execute(SchedulableContext ctx) {
+        createOrders([SELECT Name FROM Contact LIMIT 50000]);
     }
 
-    public void createOrders(List<Contact> contacts) {
+    private void createOrders(List<Contact> contacts) {
         List<Custom_Order__c> orders = new List<Custom_Order__c>();
 
         for (Contact contact : contacts) {
@@ -26,6 +22,8 @@ global class ScheduledJob implements Schedulable {
             });
         }
 
-        insert orders;
+        if (!orders.isEmpty()) {
+            insert orders;
+        }
     }
 }
