@@ -2,6 +2,16 @@ public class StartScheduledJobs {
 
     @InvocableMethod
     public static void startScheduledJobs() {
-        System.schedule('Create Orders for Contacts', '0 0 0/1 1/1 * ? *', new ScheduledJob());
+
+        List<CronTrigger> jobToStart = [
+            SELECT Id
+            FROM CronTrigger
+            WHERE CronJobDetail.Name = 'Create Orders for Contacts'
+            LIMIT 1
+        ];
+
+        if (jobToStart.isEmpty()) {
+            System.schedule('Create Orders for Contacts', '0 0 0/1 1/1 * ? *', new ScheduledJob());
+        }
     }
 }
