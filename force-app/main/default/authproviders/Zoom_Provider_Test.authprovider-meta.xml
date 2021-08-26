@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuthProvider xmlns="http://soap.sforce.com/2006/04/metadata">
+    <authorizeUrl>https://zoom.us/oauth/authorzie</authorizeUrl>
+    <consumerKey>ITvHaAy6Rxq0zRYE34eJFQ</consumerKey>
+    <consumerSecret>lbLVveRfRnW5jyKl5Ob11/mlmIhIEl/Gvg1ZFkf5wZ1wQRj3Ygtq1w==</consumerSecret>
+    <friendlyName>Zoom Provider Test</friendlyName>
+    <includeOrgIdInIdentifier>false</includeOrgIdInIdentifier>
+    <providerType>OpenIdConnect</providerType>
+    <sendAccessTokenInHeader>true</sendAccessTokenInHeader>
+    <sendClientCredentialsInHeader>true</sendClientCredentialsInHeader>
+    <sendSecretInApis>true</sendSecretInApis>
+    <tokenUrl>https://zoom.us/oauth/token</tokenUrl>
+</AuthProvider>
