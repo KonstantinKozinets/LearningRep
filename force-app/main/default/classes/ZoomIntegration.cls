@@ -1,15 +1,10 @@
 public class ZoomIntegration {
 
     @InvocableMethod
-    public static void Integrate(List<String> meetingId) {
-        if (!meetingId.isEmpty()) {
-            Http http = new Http();
-            HttpRequest request = new HttpRequest();
-            String author = 'AZeGzmMwnCBN8UCqZdeTegxb0xZZ6jmB';
-            request.setHeader('Authorization', author);
-            request.setEndpoint('callout:Zoom_Master_Connect/v2/meetings/' + meetingId[0] + '/registrants/');
-            request.setMethod('GET');
+    public static void Integrate(List<String> campaignId) {
+        if(!campaignId.isEmpty()) {
             List<CampaignMember> campaignMembers = new List<CampaignMember>();
+            List<Contact> contactsMerge = new List<Contact>();
             List<Contact> existingContactsList = [
                 SELECT LastName, FirstName, Email
                 FROM Contact
@@ -17,78 +12,64 @@ public class ZoomIntegration {
                 LIMIT 50000
             ];
             Map<String, Contact> existingContactsMap = new Map<String, Contact>();
-            Id campaign = '7015g000000557HAAQ';
 
             for (Contact contact : existingContactsList) {
                 existingContactsMap.put(contact.Email, contact);
             }
 
-            HttpResponse response = http.send(request);
-
-            if (response.getStatusCode() == 200) {
-                Map<String, Object> results = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
-                //Map<String, Object> participants = (Map<String, Object>) results.get('participants');
-                Map<String, Object> registrants = (Map<String, Object>) results.get('registrants');
-                List<Contact> newContacts = new List<Contact>();
-
-                /*for (String participant : participants.keySet()) {
-                    Map<String, Object> options = (Map<String, Object>) participants.get(participant);
-
-                    Contact contact = new Contact(
-                        LastName = (String) options.get('Name'),
-                        Email = (String) options.get('User_Email')
-                    );
-
-                    try {
-                        Contact ex = existingContactsMap.get(contact.Email);
-                        campaignMembers.add(
-                            new CampaignMember( ContactId = ex.Id, CampaignId = campaign)
-                        );
-                    } catch (System.NullPointerException e) {
-                        newContacts.add(contact);
-                    }
-
-                }*/
-
-                for (String registrant : registrants.keySet()) {
-                    Map<String, Object> options = (Map<String, Object>) registrants.get(registrant);
-
-                    Contact contact = new Contact(
-                        LastName = (String) options.get('LastName'),
-                        Email = (String) options.get('Email'),
-                        FirstName = (String) options.get('FirstName')
-                    );
-
-                    try {
-                        Contact ex = existingContactsMap.get(contact.Email);
-                        campaignMembers.add(
-                            new CampaignMember( ContactId = ex.Id, CampaignId = campaign)
-                        );
-                    } catch (System.NullPointerException e) {
-                        newContacts.add(contact);
-                    }
+            List<Contact> zoomContacts = getContactNumbers();
+            for (Contact zoomContact : zoomContacts) {
+                if(existingContactsMap.containsKey(zoomContact.Email)) {
+                    existingContactsMap.get(zoomContact.Email).Phone = zoomContact.Phone;
+                    existingContactsMap.get(zoomContact.Email).MobilePhone = zoomContact.MobilePhone;
+                    contactsMerge.add(existingContactsMap.get(zoomContact.Email));
+                } else {
+                    contactsMerge.add(zoomContact);
                 }
+            }
 
-                try {
-                    insert newContacts;
-
-                    for (Contact c : newContacts) {
-                        campaignMembers.add(
-                            new CampaignMember( CampaignId = campaign, ContactId = c.Id)
-                        );
-                    }
-
-                    insert campaignMembers;
-
-                } catch (DmlException e) {
-                    System.debug(e.getMessage());
+            try {
+                upsert contactsMerge;
+                for (Contact cont : contactsMerge) {
+                    campaignMembers.add(
+                        new CampaignMember(CampaignId = campaignId[0], ContactId = cont.Id)
+                    );
                 }
+                upsert campaignMembers;
+            } catch(DmlException e) {
 
-            } else {
-                System.debug('The status code returned was not expected: ' +
-                response.getStatusCode() + ' ' + response.getStatus());
             }
         }
     }
 
+    private static List<Contact> getContactNumbers() {
+
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint('callout:Zoom_Master_Connect/users/me');
+        request.setMethod('GET');
+        List<Contact> contactNumbers = new List<Contact>();
+
+        HttpResponse response = http.send(request);
+
+        if (response.getStatusCode() == 200) {
+            Map<String, Object> results = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
+            List<PhoneNumber> pNumbers = (List<PhoneNumber>) results.get('phone_numbers');
+            String jNumbers = JSON.serialize(pNumbers).replaceAll('number', 'nNumber');
+            List<PhoneNumber> numbers = (List<PhoneNumber>) JSON.deserialize(jNumbers, List<PhoneNumber>.class);
+
+            for (PhoneNumber phone : numbers) {
+                contactNumbers.add(
+                    new Contact(
+                        FirstName = phone.country,
+                        LastName = phone.nNumber,
+                        Email = phone.nNumber + '@gmail.com',
+                        Phone = phone.code + phone.nNumber
+                    )
+                );
+            }
+        }
+
+        return contactNumbers;
+    }
 }
