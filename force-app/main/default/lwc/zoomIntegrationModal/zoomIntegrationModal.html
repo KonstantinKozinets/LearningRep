@@ -1,0 +1,28 @@
+<template>
+    <lightning-card title="Zoom Integration">
+        <template if:true={errors}>
+            <p>{errors}</p>
+        </template>
+        <lightning-layout>
+            <div class="slds-p-around_small">
+                <lightning-combobox
+                    name="zoomPhoneType"
+                    label="Phone Type"
+                    value={value}
+                    placeholder="Select a Phone Type"
+                    options={options}
+                    onchange={handleChange}
+                    required >
+                </lightning-combobox>
+                <br/><br/>
+                <lightning-button
+                    variant="brand-outline"
+                    label="Confirm"
+                    onclick={confirmInt}
+                    class="slds-m-left_x-small"
+                    slot="footer">
+                </lightning-button>
+            </div>
+        </lightning-layout>
+    </lightning-card>
+</template>
