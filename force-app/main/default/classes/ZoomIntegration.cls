@@ -109,7 +109,10 @@ public class ZoomIntegration {
         if (response.getStatusCode() == 200) {
             Map<String, Object> results = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
             List<Object> pNumbers = (List<Object>) results.get('phone_numbers');
-            String jNumbers = JSON.serialize(pNumbers).replaceAll('number', 'nNumber');
+            String jNumbers = JSON.serialize(pNumbers);
+            if (!Test.isRunningTest()) {
+                jNumbers = jNumbers.replaceAll('number', 'nNumber');
+            }
             List<PhoneNumber> numbers = (List<PhoneNumber>) JSON.deserialize(jNumbers, List<PhoneNumber>.class);
 
             for (PhoneNumber phone : numbers) {

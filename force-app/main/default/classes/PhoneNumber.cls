@@ -19,3 +19,31 @@ public class PhoneNumber {
 		verified = zVerified;
     }
 }
+
+
+
+
+/* List<PhoneNumber> numbers = new List<PhoneNumber>();
+for (Integer i = 0; i <= 25; i++) {
+    numbers.add(new PhoneNumber(
+    	country = 'CNT'+i,
+        code = '+' + (i+10),
+        nNumber = '555'+i+'22',
+        label = 'Mobile',
+		verified = true
+    ));
+}
+
+for (Integer i = 30; i <= 55; i++) {
+    numbers.add(new PhoneNumber(
+    	country = 'CNT'+i,
+        code = '+' + (i+10),
+        nNumber = '555'+i+'22',
+        label = 'Home',
+		verified = true
+    ));
+}
+
+System.debug(numbers);
+
+*/
