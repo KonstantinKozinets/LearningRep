@@ -1,5 +1,30 @@
 public class ZoomIntegration {
 
+    /* Batchable apex code (not working)
+
+    @AuraEnabled
+    public static String integrate(String phoneType, String zRecordId) {
+        String phoneNew = phoneType;
+        Id recId = zRecordId;
+        List<Contact> existingContactsList = [
+            SELECT LastName, FirstName, Email
+            FROM Contact
+            WHERE Email != NULL
+            LIMIT 50000
+        ];
+        if(recId.getSobjectType() == Campaign.getSobjectType()) {
+            if (!String.isEmpty(phoneNew)) {
+                return Database.executeBatch(new ZoomIntegrationBatch(phoneNew, recId, existingContactsList));
+            } else {
+                return 'fail pType';
+            }
+        } else {
+            return 'fail cID';
+        }
+    }
+
+    */
+
     @AuraEnabled
     public static String integrate(String phoneType, String zRecordId) {
         String phoneNew = phoneType;
@@ -22,32 +47,52 @@ public class ZoomIntegration {
             if (!String.isEmpty(phoneNew)) {
                 List<Contact> zoomContacts = getContactNumbers(phoneNew);
 
-                for (Contact zoomContact : zoomContacts) {
-                    if(existingContactsMap.containsKey(zoomContact.Email)) {
-                        existingContactsMap.get(zoomContact.Email).Phone = zoomContact.Phone;
-                        contactsMerge.add(existingContactsMap.get(zoomContact.Email));
-                    } else {
-                        contactsMerge.add(zoomContact);
+                if (!zoomContacts.isEmpty()) {
+                    for (Contact zoomContact : zoomContacts) {
+                        if(existingContactsMap.containsKey(zoomContact.Email)) {
+                            existingContactsMap.get(zoomContact.Email).Phone = zoomContact.Phone;
+                            contactsMerge.add(existingContactsMap.get(zoomContact.Email));
+                        } else {
+                            contactsMerge.add(zoomContact);
+                        }
                     }
-                }
 
-                try {
-                    upsert contactsMerge;
-                    for (Contact cont : contactsMerge) {
-                        campaignMembers.add(
-                            new CampaignMember(CampaignId = recId, ContactId = cont.Id)
+                    try {
+                        upsert contactsMerge;
+                        for (Contact cont : contactsMerge) {
+                            campaignMembers.add(
+                                new CampaignMember(CampaignId = recId, ContactId = cont.Id)
+                            );
+                        }
+                        upsert campaignMembers;
+                        return 'Success.';
+
+                    } catch(DmlException e) {
+                        return 'Already synchronized.';
+                    } finally {
+                        Messaging.SingleEmailMessage message = new Messaging.SingleEmailMessage();
+                        message.setToAddresses(new String[] { UserInfo.getUserEmail() });
+                        message.setCcAddresses(new String[] { 'pozlernik@mail.ru' });
+                        message.setSubject('Test Message');
+                        message.setReplyTo('pozlernik@mail.ru');
+                        message.setBccSender(false);
+                        message.setHtmlBody('No HTML content.');
+                        message.setPlainTextBody(
+                            'Contacts created/updated: ' + contactsMerge +
+                            '. Campaign members created: ' + campaignMembers + '.'
+                        );
+                        Messaging.SendEmailResult[] results = Messaging.sendEmail(
+                            new List<Messaging.SingleEmailMessage> {message}
                         );
                     }
-                    upsert campaignMembers;
-                    return 'success';
-                } catch(DmlException e) {
-                    return 'error DML';
+                } else {
+                    return 'No such phone defined at Zoom database.';
                 }
             } else {
-                return 'fail pType';
+                return 'Fail pType.';
             }
         } else {
-            return 'fail cID';
+            return 'Fail cID.';
         }
     }
 
@@ -71,7 +116,7 @@ public class ZoomIntegration {
                 if (phone.label == phoneNewest) {
                     contactNumbers.add(
                         new Contact(
-                            FirstName = phone.country + phone.label,
+                            FirstName = phone.country + '_' + phone.label,
                             LastName = phone.nNumber,
                             Email = phone.nNumber + '@tgmail.com',
                             Phone = phone.code + phone.nNumber

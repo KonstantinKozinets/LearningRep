@@ -6,7 +6,6 @@ import { reduceErrors } from 'c/ldsUtils';
 export default class ZoomIntegrationModal extends LightningElement {
     @api recordId;
     @track value;
-    @track eStatus;
 
     get errors() {
         return (this.error) ?
@@ -29,18 +28,22 @@ export default class ZoomIntegrationModal extends LightningElement {
     confirmInt() {
         integrate({ phoneType: this.value, zRecordId: this.recordId })
             .then(result => {
-                this.eStatus = result;
+                const toastEvent = new ShowToastEvent({
+                    title: "Status: " + result,
+                    message: "Phone Type: " + this.value + ". Campaign: " + this.recordId,
+                    variant: "warning"
+                });
+                this.dispatchEvent(toastEvent);
             })
             .catch(error => {
                 this.error = error;
-                this.eStatus = "Error";
+                const toastEvent = new ShowToastEvent({
+                    title: "Error",
+                    message: "Phone Type: " + this.value + ". Campaign: " + this.recordId,
+                    variant: "warning"
+                });
+                this.dispatchEvent(toastEvent);
             });
-        const toastEvent = new ShowToastEvent({
-            title: "Status: " + this.eStatus,
-            message: "Phone Type: " + this.value + ". Campaign: " + this.recordId,
-            variant: "warning"
-        });
-        this.dispatchEvent(toastEvent);
     }
 
 }
