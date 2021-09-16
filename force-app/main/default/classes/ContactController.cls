@@ -10,6 +10,8 @@ public class ContactController {
             LIMIT 100
         ];
 
-        return contacts;
+        //return contacts;
+
+        throw new AuraHandledException('Forced error');
     }
 }

@@ -69,21 +69,6 @@ public class ZoomIntegration {
 
                     } catch(DmlException e) {
                         return 'Already synchronized.';
-                    } finally {
-                        Messaging.SingleEmailMessage message = new Messaging.SingleEmailMessage();
-                        message.setToAddresses(new String[] { UserInfo.getUserEmail() });
-                        message.setCcAddresses(new String[] { 'pozlernik@mail.ru' });
-                        message.setSubject('Test Message');
-                        message.setReplyTo('pozlernik@mail.ru');
-                        message.setBccSender(false);
-                        message.setHtmlBody('No HTML content.');
-                        message.setPlainTextBody(
-                            'Contacts created/updated: ' + contactsMerge +
-                            '. Campaign members created: ' + campaignMembers + '.'
-                        );
-                        Messaging.SendEmailResult[] results = Messaging.sendEmail(
-                            new List<Messaging.SingleEmailMessage> {message}
-                        );
                     }
                 } else {
                     return 'No such phone defined at Zoom database.';
