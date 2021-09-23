@@ -1,0 +1,17 @@
+<template>
+    <template if:true={validateCondition}>
+        <section>
+            <lightning-record-form
+                record-id={accountId}
+                object-api-name="Account"
+                layout-type="Compact"
+                columns="1"
+                mode="readonly"
+                fields={fields}>
+            </lightning-record-form>
+        </section>
+        <section>
+            <lightning-button label="Back" onclick={handleBack} class="slds-m-left_x-small"></lightning-button>
+        </section>
+    </template>
+</template>

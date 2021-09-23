@@ -1,0 +1,11 @@
+<template>
+    <template if:true={validateCondition}>
+        <section>
+            <lightning-record-form
+                object-api-name={objectApiName}
+                fields={fields}
+                onsuccess={handleSuccess}>
+            </lightning-record-form>
+        </section>
+    </template>
+</template>
