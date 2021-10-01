@@ -1,26 +1,32 @@
 import { LightningElement, api, track } from 'lwc';
 
+
 export default class AccountsTable extends LightningElement {
     @api accounts;
     @api fields;
     @track error;
-    isViewAction;
+    @track nAccounts;
+
+    connectedCallback() {
+        this.nAccounts = this.prepareRecords(this.accounts);
+    }
 
     handleAccountSelect(evt) {
+        console.log(evt.target.getAttribute("data-view-id"));
         const event = new CustomEvent('accountselected', {
-            detail: evt.detail
+            detail: evt.target.getAttribute("data-view-id")
         });
 
-        console.log(evt.detail);
         this.dispatchEvent(event);
     }
 
     prepareRecords(newAccounts) {
-        return newAccounts.map((account, index) => ({
+        console.log('accounts:', this.accounts);
+        return newAccounts.map((account, Index) => ({
             ...account,
-            index,
-            dataTableValue: this.fields.map((field, fIndex) => this.changeRecordValues(
-                account, field.value, fIndex
+            Index,
+            dataTableValue: this.fields.map((field, fieldName) => this.changeRecordValues(
+                account, field.fieldName, fieldName
             ))
         }));
     }
@@ -30,7 +36,7 @@ export default class AccountsTable extends LightningElement {
             key: index,
             value: account[fieldName],
             fieldName,
-            isViewAction: fieldName === "View"
+            isViewAction: fieldName === 'Name'
         };
     }
 }

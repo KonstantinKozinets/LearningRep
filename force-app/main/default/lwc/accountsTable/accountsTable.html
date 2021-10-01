@@ -6,7 +6,6 @@
         onrowaction={handleAccountSelect}>
     </lightning-datatable> -->
     <table border="1">
-        <caption>Accounts View Table</caption>
         <thead>
             <tr>
                 <template for:each={fields} for:item="field">
@@ -15,18 +14,19 @@
             </tr>
         </thead>
         <tbody class="table-body">
-            <template for:each={accounts} for:item="account">
-                <tr key={account.index}>
+            <template for:each={nAccounts} for:item="account">
+                <tr key={account.Index}>
                     <template for:each={account.dataTableValue} for:item="currentRecordValue">
                         <td key={currentRecordValue.key} role="gridcell">
                             <div if:true={currentRecordValue.isViewAction}>
-                                <lightning-button label="View"
-                                                variant="brand"
+                                <lightning-button variant="base"
+                                                label={currentRecordValue.value}
                                                 data-view-id={account.Id}
-                                                onclick={handleAccountSelect}>
+                                                onclick={handleAccountSelect}
+                                                class="slds-m-left_x-small">
                                 </lightning-button>
                             </div>
-                            <div if:false={isViewAction} title={currentRecordValue.value}>
+                            <div if:false={currentRecordValue.isViewAction}>
                                 {currentRecordValue.value}
                             </div>
                         </td>

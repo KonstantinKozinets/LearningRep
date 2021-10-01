@@ -1,4 +1,7 @@
 <template>
+    <div class="slds-col slds-has-flexi-truncate">
+        <h3 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate"  title="Account Details">Account Details</h3>
+    </div>
     <lightning-record-form
         record-id={accountId}
         object-api-name="Account"
@@ -7,6 +10,4 @@
         mode="readonly"
         fields={fields}>
     </lightning-record-form>
-    <div><p></p></div>
-    <lightning-button label="Back" onclick={handleButtonBackClick} class="slds-m-left_x-small"></lightning-button>
 </template>

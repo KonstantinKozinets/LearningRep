@@ -9,10 +9,24 @@ public with sharing class AccountFieldSet {
     @AuraEnabled
     public List<AccountFieldsWrapper> accFields;
 
-    public AccountFieldSet(List<Account> accounts, List<AccountWrapper> fieldSet, List<AccountFieldsWrapper> accFields) {
+    @AuraEnabled
+    public Integer pageNumber;
+
+    @AuraEnabled
+    public Integer pageCount;
+
+    public AccountFieldSet(
+        List<Account> accounts,
+        List<AccountWrapper> fieldSet,
+        List<AccountFieldsWrapper> accFields,
+        Integer pageNumber,
+        Integer pageCount
+    ) {
         this.accounts = accounts;
         this.fieldSet = fieldSet;
         this.accFields = accFields;
+        this.pageNumber = pageNumber;
+        this.pageCount = pageCount;
     }
 
     public static List<AccountWrapper> getFields() {
@@ -27,7 +41,7 @@ public with sharing class AccountFieldSet {
         //     )
         // );
 
-        fields.add(new AccountWrapper('View', 'view', 'text'));
+        // fields.add(new AccountWrapper('View', 'view', 'text'));
 
         return fields;
     }
@@ -65,40 +79,29 @@ public with sharing class AccountFieldSet {
         @AuraEnabled
         public String type;
 
-        @AuraEnabled
-        public ActionWrapper typeAttributes;
-
-        public AccountWrapper(String name, String label, String type) {
-            this.fieldName = name;
+        public AccountWrapper(String fieldName, String label, String type) {
+            this.fieldName = fieldName;
             this.label = label;
             this.type = type.toLowerCase();
-            this.typeAttributes = new ActionWrapper(null, null, null);
-        }
-
-        public AccountWrapper(String name, String label, String type, ActionWrapper typeAttributes) {
-            this.fieldName = name;
-            this.label = label;
-            this.type = type.toLowerCase();
-            this.typeAttributes = typeAttributes;
         }
     }
 
-    public class ActionWrapper {
-        @AuraEnabled
-        public String label;
+    // public class ActionWrapper {
+    //     @AuraEnabled
+    //     public String label;
 
-        @AuraEnabled
-        public String name;
+    //     @AuraEnabled
+    //     public String name;
 
-        @AuraEnabled
-        public String menuAlignment;
+    //     @AuraEnabled
+    //     public String menuAlignment;
 
-        public ActionWrapper(String label, String name, String menuAlignment) {
-            this.label = label;
-            this.name = name;
-            this.menuAlignment = menuAlignment;
-        }
-    }
+    //     public ActionWrapper(String label, String name, String menuAlignment) {
+    //         this.label = label;
+    //         this.name = name;
+    //         this.menuAlignment = menuAlignment;
+    //     }
+    // }
 
     public class AccountFieldsWrapper {
         @AuraEnabled
@@ -114,11 +117,22 @@ public with sharing class AccountFieldSet {
     }
 
     @AuraEnabled
-    public static AccountFieldSet getAccountList(){
+    public static AccountFieldSet getAccountList(Integer pageNumber){
         ApexPages.StandardSetController setCon = new ApexPages.StandardSetController(Database.getQueryLocator(getAccounts()));
+        Integer pageCount = setCon.getResultSize()/setCon.getPageSize();
+
+        if (pageNumber == null) {
+            setCon.first();
+        } else {
+            if (pageNumber <= pageCount && pageNumber >= 1) {
+                setCon.setPageNumber(pageNumber);
+            } else {
+                setCon.first();
+            }
+        }
 
         try {
-            return new AccountFieldSet(setCon.getRecords(), getFields(), getAccFields());
+            return new AccountFieldSet(setCon.getRecords(), getFields(), getAccFields(), setCon.getPageNumber(), pageCount);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
