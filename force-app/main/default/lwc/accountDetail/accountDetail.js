@@ -1,13 +1,9 @@
 import { LightningElement, api } from 'lwc';
 
 export default class AccountDetail extends LightningElement {
-    @api isAccounts;
-    @api isAccountCreate;
     @api fields;
     @api account;
     _accountId = undefined;
-
-    @api get validateCondition() { return (isAccounts == 'false' && isAccountCreate == 'false');}
 
     set accountId(value) {
         this.accountId = value;
@@ -18,8 +14,11 @@ export default class AccountDetail extends LightningElement {
         return this.accountId;
     }
 
-    handleBack() {
-        isAccounts = true;
-        isAccountCreate = false;
+    handleButtonBackClick(evt) {
+        const event = new CustomEvent('buttonBackClick', {
+            detail: evt.detail
+        });
+
+        this.dispatchEvent(event);
     }
 }

@@ -1,13 +1,10 @@
-import { LightningElement, api, track } from 'lwc';
+import { LightningElement, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class AccountCreate extends LightningElement {
     @api objectApiName;
     @api fields;
-    @api isAccounts;
-    @api isAccountCreate;
-
-    @api get validateCondition() { return (isAccounts == 'false' && isAccountCreate == 'true');}
+    isCreated = false;
 
     handleSuccess(event) {
         const evt = new ShowToastEvent({
@@ -16,6 +13,14 @@ export default class AccountCreate extends LightningElement {
             variant: "success"
         });
         this.dispatchEvent(evt);
+        this.isCreated = true;
     }
 
+    handleButtonBackClick(evt) {
+        const event = new CustomEvent('buttonBackClick', {
+            detail: evt.detail
+        });
+
+        this.dispatchEvent(event);
+    }
 }

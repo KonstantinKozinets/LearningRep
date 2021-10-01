@@ -1,33 +1,41 @@
 <template>
     <lightning-card class="account-page">
-        <header class="header">Accounts viewer</header>
-        <template if:false={$accounts}>
+    <div class="slds-page-header">
+        <div class="slds-grid">
+            <div class="slds-col slds-has-flexi-truncate">
+                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate"  title="Account Viewer">Account Viewer</h1>
+            </div>
+        </div>
+    </div>
+        <template if:false={accounts}>
             <p class="slds-m-bottom_small">
                 <lightning-button label="Load Accounts" onclick={handleLoad}></lightning-button>
             </p>
         </template>
-        <template if:true={$accounts}>
-            <section class="content">
-                <main class="main" >
-                    <c-accounts-table is-account={$isAccounts}
-                                    is-account-create={$isAccountCreate}
-                                    onaccountselected={handleAccountCreate}>
-                    </c-accounts-table>
-                    <c-account-detail is-account={$isAccounts}
-                                    is-account-create={$isAccountCreate}
-                                    accounts={accounts}
-                                    fields={fields}>
-                    </c-account-detail>
-                    <c-account-create is-account={$isAccounts}
-                                    is-account-create={$isAccountCreate}
-                                    fields={fields}>
-                    </c-account-create>
-                </main>
-            </section>
-            <section>
-                <lightning-button label="New" onclick={handleAccountCreate} class="slds-m-left_x-small"></lightning-button>
-            </section>
+        <template if:true={accounts}>
+            <div class="content">
+                    <template if:true={validateConditionTable}>
+                        <c-accounts-table onaccountselected={handleAccountCreate}
+                                        accounts={accounts}
+                                        fields={fields}>
+                        </c-accounts-table>
+                    </template>
+                    <template if:true={validateConditionDetail}>
+                        <c-account-detail accounts={accounts}
+                                        fields={accFields}
+                                        account-id={selectedAccountId}
+                                        onbuttonbackclick={handleBack}>
+                        </c-account-detail>
+                    </template>
+                    <template if:true={validateConditionCreate}>
+                        <c-account-create fields={accFields} onbuttonbackclick={handleBack}></c-account-create>
+                    </template>
+                    <div><p></p></div>
+                        <template if:false={validateConditionCreate}>
+                            <lightning-button label="New" onclick={handleAccountCreate} class="slds-m-left_x-small"></lightning-button>
+                        </template>
+            </div>
         </template>
-        <footer>{$accounts}</footer>
     </lightning-card>
 </template>
+<!-- custom events to deploy data -->

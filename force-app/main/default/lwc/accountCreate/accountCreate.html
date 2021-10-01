@@ -1,11 +1,10 @@
 <template>
-    <template if:true={validateCondition}>
-        <section>
-            <lightning-record-form
-                object-api-name={objectApiName}
-                fields={fields}
-                onsuccess={handleSuccess}>
-            </lightning-record-form>
-        </section>
+    <lightning-record-form
+        object-api-name="Account"
+        fields={fields}
+        onsuccess={handleSuccess}>
+    </lightning-record-form>
+    <template if:false={isCreated}>
+        <lightning-button label="Back" onclick={handleButtonBackClick} class="slds-m-left_x-small"></lightning-button>
     </template>
 </template>
