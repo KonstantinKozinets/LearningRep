@@ -1,15 +1,18 @@
 <template>
-    <div class="slds-col slds-has-flexi-truncate">
-        <h3 class="slds-m-right_small slds-align-middle slds-truncate"  title="Account Creation">Account Creation</h3>
+    <div class="slds-p-horizontal_small">
+        <lightning-record-edit-form object-api-name="Account" onsuccess={handleSuccess}>
+            <lightning-messages>
+            </lightning-messages>
+            <template for:each={fields} for:item="field">
+                <lightning-input-field field-name={field.fieldApiName}
+                                    key={field.fieldApiName}
+                                    class="slds-m-left_x-medium">
+                </lightning-input-field>
+            </template>
+            <lightning-button-group class="slds-m-left_medium">
+                <lightning-button label="Back" onclick={handleBack}></lightning-button>
+                <lightning-button label="Save" type="submit"></lightning-button>
+            </lightning-button-group>
+        </lightning-record-edit-form>
     </div>
-    <lightning-record-edit-form object-api-name="Account" onsuccess={handleSuccess}>
-        <lightning-messages>
-        </lightning-messages>
-        <template for:each={fields} for:item="field">
-            <lightning-input-field field-name={field.fieldApiName} key={field.fieldApiName}></lightning-input-field>
-        </template>
-        <div class="slds-var-m-top_medium">
-            <lightning-button class="slds-m-left_x-small" type="submit" label="Save"></lightning-button>
-        </div>
-    </lightning-record-edit-form>
 </template>

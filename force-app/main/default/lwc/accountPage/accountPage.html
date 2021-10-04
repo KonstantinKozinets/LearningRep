@@ -5,7 +5,18 @@
             <div class="slds-col slds-has-flexi-truncate slds-text-align_center">
                 <h1 class="slds-page-header__title slds-m-right_small slds-truncate"
                     title="Account Viewer">
-                    Account Viewer
+                    <template if:true={validateConditionTable}>
+                        Account Viewer Table
+                    </template>
+                    <template if:true={validateConditionDetail}>
+                        Account Details
+                    </template>
+                    <template if:true={validateConditionCreate}>
+                        Account Creation
+                    </template>
+                    <template if:false={accData}>
+                        Account Viewer - Get Started
+                    </template>
                 </h1>
             </div>
         </div>
@@ -27,30 +38,53 @@
                     </c-accounts-table>
                 </template>
                 <template if:true={validateConditionDetail}>
-                    <c-account-detail fields={accFields}
-                                    account-id={selectedAccountId}
-                                    class="slds-p-around_large">
-                    </c-account-detail>
+                    <div class="slds-m-left_x-medium">
+                        <c-account-detail fields={accFields}
+                                        account-id={selectedAccountId}
+                                        class="slds-p-around_large">
+                        </c-account-detail>
+                    </div>
                 </template>
                 <template if:true={validateConditionCreate}>
-                    <c-account-create fields={accFields}
-                                    onaccountcreationback={handleLoad}
-                                    class="slds-p-around_large">
-                    </c-account-create>
+                    <div class="slds-m-left_x-medium">
+                        <c-account-create fields={accFields}
+                                        onaccountcreationback={handleLoad}
+                                        class="slds-p-around_large">
+                        </c-account-create>
+                    </div>
                 </template>
-                <lightning-button-group class="slds-p-around_large">
-                    <template if:false={validateConditionCreate}>
-                        <lightning-button label="New" onclick={handleAccountCreate} class="slds-m-left_x-small"></lightning-button>
-                    </template>
-                    <template if:true={validateConditionTable}>
-                        <lightning-button label="Refresh" onclick={handleLoad} class="slds-m-left_x-small"></lightning-button>
-                        <lightning-button label="Previous" onclick={handlePrevious} class="slds-m-left_x-small" disabled={validateFirst}></lightning-button>
-                        <lightning-button label="Next" onclick={handleNext} class="slds-m-left_x-small" disabled={validateLast}></lightning-button>
-                    </template>
-                    <template if:false={validateConditionTable}>
-                        <lightning-button label="Back" onclick={handleBack} class="slds-m-left_x-small"></lightning-button>
-                    </template>
-                </lightning-button-group>
+                <template if:false={validateConditionCreate}>
+                    <lightning-button-group class="slds-p-around_large slds-m-left_x-small">
+                        <template if:false={validateConditionCreate}>
+                            <lightning-button label="New"
+                                            onclick={handleAccountCreate}
+                                            class="slds-m-left_x-small">
+                            </lightning-button>
+                        </template>
+                        <template if:true={validateConditionTable}>
+                            <lightning-button label="Refresh" onclick={handleLoad}></lightning-button>
+                            <lightning-button label="First"
+                                            onclick={handleFirst}
+                                            disabled={validateFirst}>
+                            </lightning-button>
+                            <lightning-button label="Previous"
+                                            onclick={handlePrevious}
+                                            disabled={validateFirst}>
+                            </lightning-button>
+                            <lightning-button label="Next"
+                                            onclick={handleNext}
+                                            disabled={validateLast}>
+                            </lightning-button>
+                            <lightning-button label="Last"
+                                            onclick={handleLast}
+                                            disabled={validateLast}>
+                            </lightning-button>
+                        </template>
+                        <template if:true={validateConditionDetail}>
+                            <lightning-button label="Back" onclick={handleBack}></lightning-button>
+                        </template>
+                    </lightning-button-group>
+                </template>
             </div>
         </template>
     </lightning-card>

@@ -1,6 +1,7 @@
 import { LightningElement, track } from 'lwc';
 import getAccountList from '@salesforce/apex/AccountFieldSet.getAccountList';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import UserPreferencesRecordHomeSectionCollapseWTShown from '@salesforce/schema/User.UserPreferencesRecordHomeSectionCollapseWTShown';
 
 export default class AccountPage extends LightningElement {
 
@@ -23,7 +24,7 @@ export default class AccountPage extends LightningElement {
         this.isAccountCreate = true;
     }
 
-     handleBack() {
+    handleBack() {
          this.isAccounts = true;
          this.isAccountCreate = false;
     }
@@ -87,6 +88,16 @@ export default class AccountPage extends LightningElement {
 
     handlePrevious() {
         this.pageNumber = this.pageNumber - 1;
+        this.handleLoad();
+    }
+
+    handleFirst() {
+        this.pageNumber = 1;
+        this.handleLoad();
+    }
+
+    handleLast() {
+        this.pageNumber = this.pageCount;
         this.handleLoad();
     }
 }

@@ -95,6 +95,7 @@ public with sharing class AccountFieldSet {
     @AuraEnabled
     public static AccountFieldSet getAccountList(Integer pageNumber) {
         ApexPages.StandardSetController setCon = new ApexPages.StandardSetController(Database.getQueryLocator(getAccounts()));
+        setCon.setPageSize(12);
         Integer pageCount = setCon.getResultSize()/setCon.getPageSize();
 
         if (pageNumber == null) {

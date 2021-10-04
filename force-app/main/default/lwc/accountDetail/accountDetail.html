@@ -1,13 +1,12 @@
 <template>
-    <div class="slds-col slds-has-flexi-truncate">
-        <h3 class="slds-m-right_small slds-align-middle slds-truncate"  title="Account Details">Account Details</h3>
+    <div class="slds-p-horizontal_small">
+        <lightning-record-form
+            record-id={accountId}
+            object-api-name="Account"
+            layout-type="Compact"
+            columns="1"
+            mode="readonly"
+            fields={fields}>
+        </lightning-record-form>
     </div>
-    <lightning-record-form
-        record-id={accountId}
-        object-api-name="Account"
-        layout-type="Compact"
-        columns="1"
-        mode="readonly"
-        fields={fields}>
-    </lightning-record-form>
 </template>
