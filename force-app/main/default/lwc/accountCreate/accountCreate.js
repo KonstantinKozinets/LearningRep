@@ -6,7 +6,6 @@ export default class AccountCreate extends LightningElement {
     @api fields;
 
     handleSuccess(event) {
-        console.log(2222);
         const evt = new ShowToastEvent({
             title: "Account created",
             message: "Record ID: " + event.detail.id,

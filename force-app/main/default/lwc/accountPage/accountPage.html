@@ -2,30 +2,43 @@
     <lightning-card class="account-page">
     <div class="slds-page-header">
         <div class="slds-grid">
-            <div class="slds-col slds-has-flexi-truncate">
-                <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate"  title="Account Viewer">Account Viewer</h1>
+            <div class="slds-col slds-has-flexi-truncate slds-text-align_center">
+                <h1 class="slds-page-header__title slds-m-right_small slds-truncate"
+                    title="Account Viewer">
+                    Account Viewer
+                </h1>
             </div>
         </div>
     </div>
         <template if:false={accData}>
-            <p class="slds-m-bottom_small">
-                <lightning-button label="Load Accounts" onclick={handleLoad}></lightning-button>
+            <p class="slds-m-bottom_small slds-p-around_large slds-text-align_center">
+                <lightning-button label="Load Accounts"
+                                onclick={handleLoad}
+                                class="slds-p-around_large">
+                </lightning-button>
             </p>
         </template>
         <template if:true={accData}>
             <div class="content">
                 <template if:true={validateConditionTable}>
                     <c-accounts-table accounts={accData}
-                                    onaccountselected={handleAccountSelected}>
+                                    onaccountselected={handleAccountSelected}
+                                    class="slds-p-around_large">
                     </c-accounts-table>
                 </template>
                 <template if:true={validateConditionDetail}>
-                    <c-account-detail fields={accFields}  account-id={selectedAccountId}></c-account-detail>
+                    <c-account-detail fields={accFields}
+                                    account-id={selectedAccountId}
+                                    class="slds-p-around_large">
+                    </c-account-detail>
                 </template>
                 <template if:true={validateConditionCreate}>
-                    <c-account-create fields={accFields} onaccountcreationback={handleLoad}></c-account-create>
+                    <c-account-create fields={accFields}
+                                    onaccountcreationback={handleLoad}
+                                    class="slds-p-around_large">
+                    </c-account-create>
                 </template>
-                <lightning-button-group>
+                <lightning-button-group class="slds-p-around_large">
                     <template if:false={validateConditionCreate}>
                         <lightning-button label="New" onclick={handleAccountCreate} class="slds-m-left_x-small"></lightning-button>
                     </template>
