@@ -35,13 +35,6 @@ public with sharing class AccountFieldSet {
         for (Schema.FieldSetMember g : SObjectType.Account.FieldSets.Account_Table.getFields()) {
             fields.add(new AccountWrapper(g.getFieldPath(), g.getLabel(), String.valueOf(g.getType())));
         }
-        // fields.add(
-        //     new AccountWrapper(
-        //         'Details', 'details', 'action', new ActionWrapper('Show Details', 'show_details', 'left')
-        //     )
-        // );
-
-        // fields.add(new AccountWrapper('View', 'view', 'text'));
 
         return fields;
     }
@@ -86,23 +79,6 @@ public with sharing class AccountFieldSet {
         }
     }
 
-    // public class ActionWrapper {
-    //     @AuraEnabled
-    //     public String label;
-
-    //     @AuraEnabled
-    //     public String name;
-
-    //     @AuraEnabled
-    //     public String menuAlignment;
-
-    //     public ActionWrapper(String label, String name, String menuAlignment) {
-    //         this.label = label;
-    //         this.name = name;
-    //         this.menuAlignment = menuAlignment;
-    //     }
-    // }
-
     public class AccountFieldsWrapper {
         @AuraEnabled
         public String fieldApiName;
@@ -117,7 +93,7 @@ public with sharing class AccountFieldSet {
     }
 
     @AuraEnabled
-    public static AccountFieldSet getAccountList(Integer pageNumber){
+    public static AccountFieldSet getAccountList(Integer pageNumber) {
         ApexPages.StandardSetController setCon = new ApexPages.StandardSetController(Database.getQueryLocator(getAccounts()));
         Integer pageCount = setCon.getResultSize()/setCon.getPageSize();
 

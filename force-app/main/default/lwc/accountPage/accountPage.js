@@ -4,20 +4,15 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class AccountPage extends LightningElement {
 
-    @track accounts;
-    @track fields;
     @track accFields;
+    @track accData;
     isAccountCreate;
     isAccounts;
     selectedAccountId;
-    @track pageNumber = 1;
-    @track pageCount;
-    isFirst = false;
-    isLast = false;
-    isInvalid;
+    pageNumber = 1;
+    pageCount = 0;
 
     handleAccountSelected(evt) {
-        console.log("logged acc ID: ", evt.detail);
         this.selectedAccountId = evt.detail;
         this.isAccounts = false;
         this.isAccountCreate = false;
@@ -34,11 +29,15 @@ export default class AccountPage extends LightningElement {
     }
 
     get validateConditionTable() {
-        return (this.isAccounts && !this.isAccountCreate && this.accounts && this.fields);
+        return (
+            this.isAccounts && !this.isAccountCreate && this.accData && this.accData.accounts && this.accData.fieldSet
+        );
     }
 
     get validateConditionDetail() {
-        return (!this.isAccounts && !this.isAccountCreate && this.selectedAccountId && this.accFields);
+        return (
+            !this.isAccounts && !this.isAccountCreate && this.selectedAccountId && this.accFields
+        );
     }
 
     get validateConditionCreate() {
@@ -46,43 +45,26 @@ export default class AccountPage extends LightningElement {
     }
 
     get validateFirst() {
-        return (this.isFirst && !this.isInvalid);
+        return (this.pageNumber == 1 || this.pageNumber < 1 || this.pageNumber > this.pageCount);
     }
 
     get validateLast() {
-        return (this.isLast && !this.isInvalid);
+        return (this.pageNumber == this.pageCount || this.pageNumber < 1 || this.pageNumber > this.pageCount);
     }
 
     handleLoad () {
         getAccountList({pageNumber: this.pageNumber})
         .then(result => {
-            this.accounts = result.accounts;
-            this.fields = result.fieldSet;
-            this.accFields = result.accFields;
+            this.accData = result;
             this.isAccounts = true;
             this.isAccountCreate = false;
             this.pageNumber = result.pageNumber;
             this.pageCount = result.pageCount;
-
-            if (result.pageNumber == 1) {
-                this.isFirst = true;
-            }
-            if (result.pageNumber < 1) {
-                this.isInvalid = true;
-            }
-            if (result.pageNumber == result.pageCount) {
-                this.isLast = true;
-            }
-            if (result.pageNumber > this.pageCount) {
-                this.isInvalid = true;
-            }
-
-            console.log('current page: ', result.pageNumber);
-            console.log('accounts:', result.accounts);
+            this.accFields = result.accFields;
 
             const toastEvent = new ShowToastEvent({
                 title: "Success",
-                message: "Records are loaded, total pages: " + result.pageCount,
+                message: "Current page: " + result.pageNumber + " of " + result.pageCount,
                 variant: "success"
             });
             this.dispatchEvent(toastEvent);
@@ -99,14 +81,12 @@ export default class AccountPage extends LightningElement {
     }
 
     handleNext() {
-        this.pageNumber = this.pageNumber + 1;
-        console.log('next page', this.pageNumber);
+        this.pageNumber++;
         this.handleLoad();
     }
 
     handlePrevious() {
         this.pageNumber = this.pageNumber - 1;
-        console.log('previous page', this.pageNumber);
         this.handleLoad();
     }
 }

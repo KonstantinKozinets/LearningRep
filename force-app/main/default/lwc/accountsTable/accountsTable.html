@@ -1,10 +1,4 @@
 <template>
-    <!-- <lightning-datatable
-        key-field="Id"
-        data={accounts}
-        columns={fields}
-        onrowaction={handleAccountSelect}>
-    </lightning-datatable> -->
     <table border="1">
         <thead>
             <tr>
@@ -14,7 +8,7 @@
             </tr>
         </thead>
         <tbody class="table-body">
-            <template for:each={nAccounts} for:item="account">
+            <template for:each={accounts} for:item="account">
                 <tr key={account.Index}>
                     <template for:each={account.dataTableValue} for:item="currentRecordValue">
                         <td key={currentRecordValue.key} role="gridcell">
