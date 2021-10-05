@@ -6,12 +6,15 @@ import UserPreferencesRecordHomeSectionCollapseWTShown from '@salesforce/schema/
 export default class AccountPage extends LightningElement {
 
     @track accFields;
+    @track isLoading
     @track accData;
+    @track error;
     isAccountCreate;
     isAccounts;
     selectedAccountId;
     pageNumber = 1;
     pageCount = 0;
+
 
     handleAccountSelected(evt) {
         this.selectedAccountId = evt.detail;
@@ -25,8 +28,12 @@ export default class AccountPage extends LightningElement {
     }
 
     handleBack() {
-         this.isAccounts = true;
-         this.isAccountCreate = false;
+        this.isAccounts = true;
+        this.isAccountCreate = false;
+    }
+
+    get validateLoading() {
+        return this.isLoading;
     }
 
     get validateConditionTable() {
@@ -68,7 +75,9 @@ export default class AccountPage extends LightningElement {
                 message: "Current page: " + result.pageNumber + " of " + result.pageCount,
                 variant: "success"
             });
+
             this.dispatchEvent(toastEvent);
+            this.isLoading = false;
         })
         .catch(error => {
             this.error = error;
@@ -78,25 +87,30 @@ export default class AccountPage extends LightningElement {
                 variant: "error"
             });
             this.dispatchEvent(toastEvent);
+            this.isLoading = false;
         });
     }
 
     handleNext() {
+        this.isLoading = true;
         this.pageNumber++;
         this.handleLoad();
     }
 
     handlePrevious() {
+        this.isLoading = true;
         this.pageNumber = this.pageNumber - 1;
         this.handleLoad();
     }
 
     handleFirst() {
+        this.isLoading = true;
         this.pageNumber = 1;
         this.handleLoad();
     }
 
     handleLast() {
+        this.isLoading = true;
         this.pageNumber = this.pageCount;
         this.handleLoad();
     }

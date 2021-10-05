@@ -1,26 +1,26 @@
 <template>
-    <lightning-card class="account-page">
-    <div class="slds-page-header">
-        <div class="slds-grid">
-            <div class="slds-col slds-has-flexi-truncate slds-text-align_center">
-                <h1 class="slds-page-header__title slds-m-right_small slds-truncate"
-                    title="Account Viewer">
-                    <template if:true={validateConditionTable}>
-                        Account Viewer Table
-                    </template>
-                    <template if:true={validateConditionDetail}>
-                        Account Details
-                    </template>
-                    <template if:true={validateConditionCreate}>
-                        Account Creation
-                    </template>
-                    <template if:false={accData}>
-                        Account Viewer - Get Started
-                    </template>
-                </h1>
+    <lightning-card>
+        <div class="slds-page-header">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate slds-text-align_center">
+                    <h1 class="slds-page-header__title slds-m-right_small slds-truncate"
+                        title="Account Viewer">
+                        <template if:true={validateConditionTable}>
+                            Account Viewer Table
+                        </template>
+                        <template if:true={validateConditionDetail}>
+                            Account Details
+                        </template>
+                        <template if:true={validateConditionCreate}>
+                            Account Creation
+                        </template>
+                        <template if:false={accData}>
+                            Account Viewer - Get Started
+                        </template>
+                    </h1>
+                </div>
             </div>
         </div>
-    </div>
         <template if:false={accData}>
             <p class="slds-m-bottom_small slds-p-around_large slds-text-align_center">
                 <lightning-button label="Load Accounts"
@@ -30,6 +30,11 @@
             </p>
         </template>
         <template if:true={accData}>
+            <div class="spinner">
+                <template if:true={validateLoading}>
+                     <lightning-spinner alternative-text="Loading" variant="brand" size="large"></lightning-spinner>
+                </template>
+            </div>
             <div class="content">
                 <template if:true={validateConditionTable}>
                     <c-accounts-table accounts={accData}
@@ -87,6 +92,9 @@
                     </lightning-button-group>
                 </template>
             </div>
+        </template>
+        <template if:true={error}>
+            {error}
         </template>
     </lightning-card>
 </template>
