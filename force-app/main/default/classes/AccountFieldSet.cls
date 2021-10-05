@@ -58,7 +58,7 @@ public with sharing class AccountFieldSet {
             }
         }
 
-        query += 'Id, Name FROM Account LIMIT 50000';
+        query += 'Id, Name FROM Account ORDER BY createdDate DESC LIMIT 50000';
         return query;
     }
 
@@ -96,7 +96,9 @@ public with sharing class AccountFieldSet {
     public static AccountFieldSet getAccountList(Integer pageNumber) {
         ApexPages.StandardSetController setCon = new ApexPages.StandardSetController(Database.getQueryLocator(getAccounts()));
         setCon.setPageSize(12);
-        Integer pageCount = setCon.getResultSize()/setCon.getPageSize();
+        Integer pageCount = Integer.valueOf(
+            Math.ceil(Double.valueOf(setCon.getResultSize())/Double.valueOf(setCon.getPageSize()))
+        );
 
         if (pageNumber == null) {
             setCon.first();
