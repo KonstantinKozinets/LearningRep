@@ -1,6 +1,9 @@
 <template>
     <div class="slds-p-horizontal_small">
-        <lightning-record-edit-form object-api-name="Account" onsuccess={handleSuccess}>
+        <template if:true={validateLoading}>
+            <lightning-spinner alternative-text="Loading" variant="brand" size="large"></lightning-spinner>
+        </template>
+        <lightning-record-edit-form object-api-name="Account" onsuccess={handleSuccess} onload={handleLoad}>
             <lightning-messages>
             </lightning-messages>
             <template for:each={fields} for:item="field">
@@ -11,7 +14,7 @@
             </template>
             <lightning-button-group class="slds-m-left_medium">
                 <lightning-button label="Back" onclick={handleBack}></lightning-button>
-                <lightning-button label="Save" type="submit"></lightning-button>
+                <lightning-button label="Save" type="submit" onclick={handleProcessing}></lightning-button>
             </lightning-button-group>
         </lightning-record-edit-form>
     </div>

@@ -1,9 +1,14 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class AccountCreate extends LightningElement {
+    @track isLoading = true;
     @api objectApiName;
     @api fields;
+
+    get validateLoading() {
+        return this.isLoading;
+    }
 
     handleSuccess(event) {
         const evt = new ShowToastEvent({
@@ -12,11 +17,20 @@ export default class AccountCreate extends LightningElement {
             variant: "success"
         });
         this.dispatchEvent(evt);
+        this.isLoading = false;
         this.handleBack();
     }
 
     handleBack() {
         this.dispatchEvent(new CustomEvent('accountcreationback'));
+    }
+
+    handleProcessing() {
+        this.isLoading = true;
+    }
+
+    handleLoad() {
+        this.isLoading = false;
     }
 
 }
