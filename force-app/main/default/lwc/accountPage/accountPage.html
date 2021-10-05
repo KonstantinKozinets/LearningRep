@@ -1,9 +1,9 @@
 <template>
     <lightning-card>
-        <div class="slds-page-header">
+        <div class="slds-page-header slds-p-bottom-x_large">
             <div class="slds-grid">
                 <div class="slds-col slds-has-flexi-truncate slds-text-align_center">
-                    <h1 class="slds-page-header__title slds-m-right_small slds-truncate"
+                    <h1 class="slds-page-header__title slds-truncate"
                         title="Account Viewer">
                         <template if:true={validateConditionTable}>
                             Account Viewer Table
@@ -22,11 +22,10 @@
             </div>
         </div>
         <template if:false={accData}>
-            <p class="slds-m-bottom_small slds-p-around_large slds-text-align_center">
+            <p class="slds-m-bottom_small slds-p-around_xx-large slds-text-align_center">
                 <lightning-button variant="brand-outline"
                                 label="Load Accounts"
-                                onclick={handleLoad}
-                                class="slds-p-around_xx-large">
+                                onclick={handleLoad}>
                 </lightning-button>
             </p>
         </template>
