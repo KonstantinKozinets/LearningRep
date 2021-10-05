@@ -4,9 +4,13 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class AccountDetail extends LightningElement {
     @track error;
-    @track isLoading = false;
+    @track isLoading = true;
     @api fields;
     @api accountId;
+
+    get validateLoading() {
+        return this.isLoading;
+    }
 
     handleDelete() {
         this.isLoading = true;
@@ -19,7 +23,6 @@ export default class AccountDetail extends LightningElement {
                         variant: 'success'
                     })
                 );
-                this.isLoading = false;
                 this.handleBack();
             })
             .catch(error => {
@@ -40,6 +43,10 @@ export default class AccountDetail extends LightningElement {
 
     handleNew() {
         this.dispatchEvent(new CustomEvent('accountdetailnew'));
+    }
+
+    handleLoad() {
+        this.isLoading = false;
     }
 
 }

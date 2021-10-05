@@ -1,12 +1,16 @@
 <template>
     <div class="slds-p-horizontal_small">
+        <template if:true={validateLoading}>
+            <lightning-spinner alternative-text="Loading" variant="brand" size="large"></lightning-spinner>
+        </template>
         <lightning-record-form
             record-id={accountId}
             object-api-name="Account"
             layout-type="Compact"
             columns="1"
             mode="readonly"
-            fields={fields}>
+            fields={fields}
+            onload={handleLoad}>
         </lightning-record-form>
         <div class="slds-p-top_medium slds-p-bottom-small slds-clearfix">
             <lightning-button label="Back"
