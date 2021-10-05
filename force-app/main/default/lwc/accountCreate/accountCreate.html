@@ -12,10 +12,18 @@
                                     class="slds-m-left_x-medium">
                 </lightning-input-field>
             </template>
-            <lightning-button-group class="slds-m-left_medium">
-                <lightning-button label="Back" onclick={handleBack}></lightning-button>
-                <lightning-button label="Save" type="submit" onclick={handleProcessing}></lightning-button>
-            </lightning-button-group>
+            <div class="slds-p-top_medium slds-p-bottom-small slds-clearfix">
+                <lightning-button label="Back"
+                                onclick={handleBack}
+                                class="slds-p-right_large slds-float_right">
+                </lightning-button>
+                <lightning-button variant="brand-outline"
+                                label="Save"
+                                type="submit"
+                                onclick={handleProcessing}
+                                class="slds-p-left_large slds-float_left">
+                </lightning-button>
+            </div>
         </lightning-record-edit-form>
     </div>
 </template>

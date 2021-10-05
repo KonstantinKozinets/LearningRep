@@ -11,12 +11,13 @@ export default class AccountCreate extends LightningElement {
     }
 
     handleSuccess(event) {
-        const evt = new ShowToastEvent({
-            title: "Account created",
-            message: "Record ID: " + event.detail.id,
-            variant: "success"
-        });
-        this.dispatchEvent(evt);
+        this.dispatchEvent(
+            new ShowToastEvent({
+                title: "Account created",
+                message: "Record ID: " + event.detail.id,
+                variant: "success"
+            })
+        );
         this.isLoading = false;
         this.handleBack();
     }

@@ -69,13 +69,13 @@ export default class AccountPage extends LightningElement {
             this.pageCount = result.pageCount;
             this.accFields = result.accFields;
 
-            const toastEvent = new ShowToastEvent({
-                title: "Success",
-                message: "Current page: " + result.pageNumber + " of " + result.pageCount,
-                variant: "success"
-            });
+            // const toastEvent = new ShowToastEvent({
+            //     title: "Success",
+            //     message: "Current page: " + result.pageNumber + " of " + result.pageCount,
+            //     variant: "success"
+            // });
 
-            this.dispatchEvent(toastEvent);
+            // this.dispatchEvent(toastEvent);
             this.isLoading = false;
         })
         .catch(error => {
