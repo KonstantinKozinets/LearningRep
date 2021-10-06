@@ -3,15 +3,18 @@
         <template if:true={validateLoading}>
             <lightning-spinner alternative-text="Loading" variant="brand" size="large"></lightning-spinner>
         </template>
-        <lightning-record-form
+        <lightning-record-view-form
             record-id={accountId}
             object-api-name="Account"
-            layout-type="Compact"
-            columns="1"
-            mode="readonly"
-            fields={fields}
             onload={handleLoad}>
-        </lightning-record-form>
+            <div class="slds-box">
+                <template for:each={fields} for:item="field">
+                    <lightning-output-field field-name={field.fieldApiName}
+                                            key={field.fieldApiName}>
+                    </lightning-output-field>
+                </template>
+            </div>
+        </lightning-record-view-form>
         <div class="slds-p-top_medium slds-p-bottom-small slds-clearfix">
             <lightning-button label="Back"
                             onclick={handleBack}
@@ -19,7 +22,7 @@
             </lightning-button>
             <lightning-button variant="brand-outline"
                         label="New"
-                        onclick={handleAccountCreate}
+                        onclick={handleNew}
                         class="slds-p-left_large slds-float_left">
             </lightning-button>
             <lightning-button variant="destructive-text"

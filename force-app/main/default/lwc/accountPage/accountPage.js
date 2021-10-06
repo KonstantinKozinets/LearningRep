@@ -120,7 +120,6 @@ export default class AccountPage extends LightningElement {
 
     handleChangeSize(event){
         this.pageSize = event.target.value;
-        console.log(event.target.value);
      }
 
     handleReSize() {
