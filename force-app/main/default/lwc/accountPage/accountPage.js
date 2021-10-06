@@ -5,31 +5,18 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class AccountPage extends LightningElement {
 
     @track accFields;
-    @track isLoading
     @track accData;
     @track error;
+    @track pageSize;
+
+    isLoading;
+    isSized = false;
     isAccountCreate;
     isAccounts;
+
     selectedAccountId;
     pageNumber = 1;
     pageCount = 0;
-
-
-    handleAccountSelected(evt) {
-        this.selectedAccountId = evt.detail;
-        this.isAccounts = false;
-        this.isAccountCreate = false;
-    }
-
-    handleAccountCreate() {
-        this.isAccounts = false;
-        this.isAccountCreate = true;
-    }
-
-    handleBack() {
-        this.isLoading = true;
-        this.handleLoad();
-    }
 
     get validateLoading() {
         return this.isLoading;
@@ -59,35 +46,52 @@ export default class AccountPage extends LightningElement {
         return (this.pageNumber == this.pageCount || this.pageNumber < 1 || this.pageNumber > this.pageCount);
     }
 
+    get validatePageSize() {
+        return (this.pageSize && this.pageSize <= 50 && this.pageSize >= 2)
+    }
+
+    get validateSizeBut() {
+        return !this.validatePageSize;
+    }
+
+    handleAccountSelected(evt) {
+        this.selectedAccountId = evt.detail;
+        this.isAccounts = false;
+        this.isAccountCreate = false;
+    }
+
+    handleAccountCreate() {
+        this.isAccounts = false;
+        this.isAccountCreate = true;
+    }
+
+    handleBack() {
+        this.isLoading = true;
+        this.handleLoad();
+    }
+
     handleLoad () {
-        getAccountList({pageNumber: this.pageNumber})
-        .then(result => {
-            this.accData = result;
-            this.isAccounts = true;
-            this.isAccountCreate = false;
-            this.pageNumber = result.pageNumber;
-            this.pageCount = result.pageCount;
-            this.accFields = result.accFields;
-
-            // const toastEvent = new ShowToastEvent({
-            //     title: "Success",
-            //     message: "Current page: " + result.pageNumber + " of " + result.pageCount,
-            //     variant: "success"
-            // });
-
-            // this.dispatchEvent(toastEvent);
-            this.isLoading = false;
-        })
-        .catch(error => {
-            this.error = error;
-            const toastEvent = new ShowToastEvent({
-                title: "Error",
-                message: "Error: " + error.message,
-                variant: "error"
+        getAccountList({pageNumber: this.pageNumber, pageSize: this.pageSize})
+            .then(result => {
+                this.isSized = true;
+                this.accData = result;
+                this.isAccounts = true;
+                this.isAccountCreate = false;
+                this.pageNumber = result.pageNumber;
+                this.pageCount = result.pageCount;
+                this.accFields = result.accFields;
+                this.isLoading = false;
+            })
+            .catch(error => {
+                this.error = error;
+                const toastEvent = new ShowToastEvent({
+                    title: "Error",
+                    message: "Error: " + error.message,
+                    variant: "error"
+                });
+                this.dispatchEvent(toastEvent);
+                this.isLoading = false;
             });
-            this.dispatchEvent(toastEvent);
-            this.isLoading = false;
-        });
     }
 
     handleNext() {
@@ -112,5 +116,15 @@ export default class AccountPage extends LightningElement {
         this.isLoading = true;
         this.pageNumber = this.pageCount;
         this.handleLoad();
+    }
+
+    handleChangeSize(event){
+        this.pageSize = event.target.value;
+        console.log(event.target.value);
+     }
+
+    handleReSize() {
+        this.isSized = false;
+        this.accData = false;
     }
 }

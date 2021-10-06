@@ -21,13 +21,38 @@
                 </div>
             </div>
         </div>
-        <template if:false={accData}>
-            <p class="slds-m-bottom_small slds-p-around_xx-large slds-text-align_center">
-                <lightning-button variant="brand-outline"
-                                label="Load Accounts"
-                                onclick={handleLoad}>
-                </lightning-button>
-            </p>
+        <template if:false={isSized}>
+            <div class="slds-p-vertical_xx-large slds-grid">
+                <div class="slds-col"></div>
+                <div class="slds-col"></div>
+                <div class="slds-col">
+                    <div>
+                        <label class="slds-form-element__label">
+                            <span class="slds-m-right_xx-small">Page Size</span>
+                            <lightning-helptext content="From 1 to 50 records on page."></lightning-helptext>
+                        </label>
+                        <lightning-input type="number"
+                                        variant="label-hidden"
+                                        name="PageSize"
+                                        value={pageSize}
+                                        onchange={handleChangeSize}
+                                        placeholder="Amount of records on page..."
+                                        max-length=2
+                                        required="true"
+                                        style="width:250px">
+                        </lightning-input>
+                    </div>
+                    <div class="slds-p-top_medium">
+                        <lightning-button variant="brand-outline"
+                                        label="Load Accounts"
+                                        onclick={handleLoad}
+                                        disabled={validateSizeBut}>
+                        </lightning-button>
+                    </div>
+                </div>
+                <div class="slds-col"></div>
+                <div class="slds-col"></div>
+            </div>
         </template>
         <template if:true={accData}>
             <div class="spinner">
@@ -43,7 +68,7 @@
                     </c-accounts-table>
                     <div class="slds-p-vertical_medium slds-grid slds-gutters">
                         <div class="slds-col">
-                            <lightning-button label="New"
+                            <lightning-button label="New Account"
                                             variant="brand-outline"
                                             onclick={handleAccountCreate}
                                             class="slds-m-left_large">
@@ -51,10 +76,15 @@
                             <lightning-button variant="brand-outline"
                                             label="Refresh"
                                             onclick={handleLoad}
+                                            class="slds-m-left_xx-large">
+                            </lightning-button>
+                            <lightning-button variant="brand-outline"
+                                            label="Resize"
+                                            onclick={handleReSize}
                                             class="slds-m-left_small">
                             </lightning-button>
                         </div>
-                        <div class="slds-col slds-align_absolute-center">
+                        <div class="slds-col slds-align_left">
                             <lightning-button-group>
                                 <lightning-button label="First"
                                                 onclick={handleFirst}
