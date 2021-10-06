@@ -46,7 +46,8 @@
                         <lightning-button variant="brand-outline"
                                         label="Load Accounts"
                                         onclick={handleLoad}
-                                        disabled={validateSizeBut}>
+                                        disabled={validateSizeBut}
+                                        title="Load accounts table">
                         </lightning-button>
                     </div>
                 </div>
@@ -71,36 +72,43 @@
                             <lightning-button label="New Account"
                                             variant="brand-outline"
                                             onclick={handleAccountCreate}
-                                            class="slds-m-left_large">
+                                            class="slds-m-left_large"
+                                            title="Create new account">
                             </lightning-button>
                             <lightning-button variant="brand-outline"
                                             label="Refresh"
                                             onclick={handleLoad}
-                                            class="slds-m-left_xx-large">
+                                            class="slds-m-left_xx-large"
+                                            title="Refresh accounts table">
                             </lightning-button>
                             <lightning-button variant="brand-outline"
                                             label="Resize"
                                             onclick={handleReSize}
-                                            class="slds-m-left_small">
+                                            class="slds-m-left_small"
+                                            title="Change the page size of the table">
                             </lightning-button>
                         </div>
                         <div class="slds-col slds-align_left">
                             <lightning-button-group>
                                 <lightning-button label="First"
                                                 onclick={handleFirst}
-                                                disabled={validateFirst}>
+                                                disabled={validateFirst}
+                                                title="Go to the first page">
                                 </lightning-button>
                                 <lightning-button label="Previous"
                                                 onclick={handlePrevious}
-                                                disabled={validateFirst}>
+                                                disabled={validateFirst}
+                                                title="Go to the previous page">
                                 </lightning-button>
                                 <lightning-button label="Next"
                                                 onclick={handleNext}
-                                                disabled={validateLast}>
+                                                disabled={validateLast}
+                                                title="Go to the next page">
                                 </lightning-button>
                                 <lightning-button label="Last"
                                                 onclick={handleLast}
-                                                disabled={validateLast}>
+                                                disabled={validateLast}
+                                                title="Go to the last page">
                                 </lightning-button>
                             </lightning-button-group>
                         </div>
