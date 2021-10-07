@@ -4,7 +4,7 @@
             <thead>
                 <tr>
                     <template for:each={fields} for:item="field">
-                        <th key={field.fieldName} style="padding:15px">{field.label}</th>
+                        <th key={field.fieldName} class="th-label">{field.label}</th>
                     </template>
                 </tr>
             </thead>
@@ -14,7 +14,7 @@
                         <template for:each={account.dataTableValue} for:item="currentRecordValue">
                             <td key={currentRecordValue.key}
                                 role="gridcell"
-                                style="padding: 8px">
+                                class="td-body">
                                 <div if:true={currentRecordValue.isViewAction}>
                                     <lightning-button variant="base"
                                                     label={currentRecordValue.value}
