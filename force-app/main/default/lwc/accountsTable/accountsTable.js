@@ -14,7 +14,6 @@ export default class AccountsTable extends LightningElement {
     set accounts(value) {
         this.nAccounts = value && value.accounts && value.fieldSet ? this.prepareRecords(value) : [];
         this.fields = value && value.fieldSet ? value.fieldSet : [];
-        console.log(JSON.stringify(this.nAccounts));
     }
 
     handleAccountSelect(evt) {
