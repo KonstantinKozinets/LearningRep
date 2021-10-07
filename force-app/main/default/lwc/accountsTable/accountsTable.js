@@ -14,6 +14,7 @@ export default class AccountsTable extends LightningElement {
     set accounts(value) {
         this.nAccounts = value && value.accounts && value.fieldSet ? this.prepareRecords(value) : [];
         this.fields = value && value.fieldSet ? value.fieldSet : [];
+        console.log(JSON.stringify(this.nAccounts));
     }
 
     handleAccountSelect(evt) {
@@ -29,17 +30,27 @@ export default class AccountsTable extends LightningElement {
             ...account,
             Index,
             dataTableValue: newAccounts.fieldSet.map((field, fieldName) => this.changeRecordValues(
-                account, field.fieldName, fieldName
+                account, field.fieldName, field.type, fieldName
             ))
         }));
     }
 
-    changeRecordValues(account, fieldName, index) {
+    changeRecordValues(account, fieldName, type, index) {
         return {
             key: index,
             value: account[fieldName],
+            type,
             fieldName,
-            isViewAction: fieldName === 'Name'
+            isDateTimeType: type === 'datetime',
+            isDateType: type === 'date',
+            isPhoneType: type === 'phone',
+            isEmailType: type === 'email',
+            isViewAction: fieldName === 'Name',
+            isCommonView: type !== 'datetime' &&
+                        fieldName !== 'Name' &&
+                        type !== 'date'&&
+                        type !== 'email' &&
+                        type !== 'phone'
         };
     }
 }

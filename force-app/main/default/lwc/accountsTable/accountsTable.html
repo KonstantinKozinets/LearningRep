@@ -24,8 +24,30 @@
                                                     title="Account details">
                                     </lightning-button>
                                 </div>
-                                <div if:false={currentRecordValue.isViewAction}>
-                                    {currentRecordValue.value}
+                                <div if:true={currentRecordValue.isCommonView}>
+                                    <p>{currentRecordValue.value}</p>
+                                </div>
+                                <div if:true={currentRecordValue.isDateTimeType}>
+                                    <lightning-formatted-date-time value={currentRecordValue.value}
+                                                                year="2-digit"
+                                                                month="short"
+                                                                day="2-digit"
+                                                                hour="numeric"
+                                                                weekday="long"
+                                                                era="short">
+                                    </lightning-formatted-date-time>
+                                </div>
+                                <div if:true={currentRecordValue.isPhoneType}>
+                                    <lightning-formatted-phone value={currentRecordValue.value}>
+                                    </lightning-formatted-phone>
+                                </div>
+                                <div if:true={currentRecordValue.isEmailType}>
+                                    <lightning-formatted-email value={currentRecordValue.value}>
+                                    </lightning-formatted-email>
+                                </div>
+                                <div if:true={currentRecordValue.isDateType}>
+                                    <lightning-formatted-date-time value={currentRecordValue.value}>
+                                    </lightning-formatted-date-time>
                                 </div>
                             </td>
                         </template>

@@ -94,26 +94,36 @@ public with sharing class AccountFieldSet {
 
     @AuraEnabled
     public static AccountFieldSet getAccountList(Integer pageNumber, Integer pageSize) {
-        ApexPages.StandardSetController setCon = new ApexPages.StandardSetController(Database.getQueryLocator(getAccounts()));
-        setCon.setPageSize(pageSize);
-        Integer pageCount = Integer.valueOf(
-            Math.ceil(Double.valueOf(setCon.getResultSize())/Double.valueOf(setCon.getPageSize()))
-        );
-
-        if (pageNumber == null) {
-            setCon.first();
-        } else {
-            if (pageNumber <= pageCount && pageNumber >= 1) {
-                setCon.setPageNumber(pageNumber);
-            } else {
-                setCon.first();
-            }
-        }
-
         try {
-            return new AccountFieldSet(setCon.getRecords(), getFields(), getAccFields(), setCon.getPageNumber(), pageCount);
+            ApexPages.StandardSetController setCon = new ApexPages.StandardSetController(
+                Database.getQueryLocator(getAccounts())
+            );
+            setCon.setPageSize(pageSize);
+            Integer pageCount = Integer.valueOf(
+                Math.ceil(Double.valueOf(setCon.getResultSize())/Double.valueOf(setCon.getPageSize()))
+            );
+
+            if (pageNumber == null) {
+                setCon.first();
+            } else {
+                if (pageNumber <= pageCount && pageNumber >= 1) {
+                    setCon.setPageNumber(pageNumber);
+                } else {
+                    setCon.first();
+                }
+            }
+
+            return new AccountFieldSet(
+                setCon.getRecords(),
+                getFields(),
+                getAccFields(),
+                setCon.getPageNumber(),
+                pageCount
+            );
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            AuraHandledException a = new AuraHandledException('ApexError: ' + e.getMessage());
+            a.setMessage('ApexError: ' + e.getMessage());
+            throw a;
         }
     }
 }

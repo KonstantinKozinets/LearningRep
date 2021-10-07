@@ -81,6 +81,9 @@ export default class AccountPage extends LightningElement {
                 this.pageCount = result.pageCount;
                 this.accFields = result.accFields;
                 this.isLoading = false;
+
+                console.log(JSON.stringify(result.fieldSet));
+                console.log(JSON.stringify(result.accFields));
             })
             .catch(error => {
                 this.error = error;
