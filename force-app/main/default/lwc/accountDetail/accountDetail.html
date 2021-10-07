@@ -3,18 +3,20 @@
         <template if:true={validateLoading}>
             <lightning-spinner alternative-text="Loading" variant="brand" size="large"></lightning-spinner>
         </template>
-        <lightning-record-view-form
-            record-id={accountId}
-            object-api-name="Account"
-            onload={handleLoad}>
-            <div class="slds-box">
-                <template for:each={fields} for:item="field">
-                    <lightning-output-field field-name={field.fieldApiName}
-                                            key={field.fieldApiName}>
-                    </lightning-output-field>
-                </template>
-            </div>
-        </lightning-record-view-form>
+        <div class="cs-back">
+            <lightning-record-view-form
+                record-id={accountId}
+                object-api-name="Account"
+                onload={handleLoad}>
+                <div class="slds-box">
+                    <template for:each={fields} for:item="field">
+                        <lightning-output-field field-name={field.fieldApiName}
+                                                key={field.fieldApiName}>
+                        </lightning-output-field>
+                    </template>
+                </div>
+            </lightning-record-view-form>
+        </div>
         <div class="slds-p-top_medium slds-p-bottom-small slds-clearfix">
             <lightning-button label="Back"
                             onclick={handleBack}

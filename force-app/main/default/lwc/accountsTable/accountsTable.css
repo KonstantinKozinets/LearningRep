@@ -1,7 +1,21 @@
 .th-label {
     padding: 15px;
+    color: #F08080;
 }
 
 .td-body {
     padding: 8px;
+    color: #228B22;
+}
+
+.btn-color{
+    color: #B22222;
+}
+
+.cs-font{
+    font-style: italic;
+}
+
+.cs-animation{
+    animation-name: bounce;
 }

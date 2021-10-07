@@ -15,7 +15,7 @@
                             <td key={currentRecordValue.key}
                                 role="gridcell"
                                 class="td-body">
-                                <div if:true={currentRecordValue.isViewAction}>
+                                <div if:true={currentRecordValue.isViewAction} class="cs-animation">
                                     <lightning-button variant="base"
                                                     label={currentRecordValue.value}
                                                     data-view-id={account.Id}
@@ -27,7 +27,7 @@
                                 <div if:true={currentRecordValue.isCommonView}>
                                     <p>{currentRecordValue.value}</p>
                                 </div>
-                                <div if:true={currentRecordValue.isDateTimeType}>
+                                <div if:true={currentRecordValue.isDateTimeType} class="btn-color">
                                     <lightning-formatted-date-time value={currentRecordValue.value}
                                                                 year="2-digit"
                                                                 month="short"
@@ -37,7 +37,7 @@
                                                                 era="short">
                                     </lightning-formatted-date-time>
                                 </div>
-                                <div if:true={currentRecordValue.isPhoneType}>
+                                <div if:true={currentRecordValue.isPhoneType} class="cs-font">
                                     <lightning-formatted-phone value={currentRecordValue.value}>
                                     </lightning-formatted-phone>
                                 </div>
