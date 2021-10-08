@@ -17,6 +17,18 @@ export default class AccountPage extends LightningElement {
     pageNumber = 1;
     pageCount = 0;
 
+    get pageTitle() {
+        if (this.validateConditionTable) {
+            return `Account Viewer Table (page ${this.pageNumber}/${this.pageCount})`;
+        } else if (this.validateConditionDetail) {
+            return 'Account Details';
+        } else if (this.validateConditionCreate) {
+            return 'Account Creation';
+        } else {
+            return 'Account Viewer - Get Started';
+        }
+    }
+
     get validateLoading() {
         return this.isLoading;
     }

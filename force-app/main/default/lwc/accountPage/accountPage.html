@@ -5,18 +5,7 @@
                 <div class="slds-col slds-has-flexi-truncate slds-text-align_center">
                     <h1 class="slds-page-header__title slds-truncate"
                         title="Account Viewer">
-                        <template if:true={validateConditionTable}>
-                            Account Viewer Table (p. {pageNumber}/{pageCount})
-                        </template>
-                        <template if:true={validateConditionDetail}>
-                            Account Details
-                        </template>
-                        <template if:true={validateConditionCreate}>
-                            Account Creation
-                        </template>
-                        <template if:false={accData}>
-                            Account Viewer - Get Started
-                        </template>
+                        {pageTitle}
                     </h1>
                 </div>
             </div>
