@@ -24,9 +24,9 @@ export default class AccountPage extends LightningElement {
             return 'Account Details';
         } else if (this.validateConditionCreate) {
             return 'Account Creation';
-        } else {
-            return 'Account Viewer - Get Started';
         }
+
+        return 'Account Viewer - Get Started';
     }
 
     get validateLoading() {
