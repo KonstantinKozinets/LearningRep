@@ -6,7 +6,6 @@ export default class AccountPage extends LightningElement {
 
     @track accFields;
     @track accData;
-    @track error;
     @track pageSize;
 
     isLoading;
@@ -83,7 +82,6 @@ export default class AccountPage extends LightningElement {
                 this.isLoading = false;
             })
             .catch(error => {
-                this.error = error;
                 const toastEvent = new ShowToastEvent({
                     title: "Error",
                     message: "Error: " + error.message,

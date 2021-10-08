@@ -3,7 +3,6 @@ import { deleteRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class AccountDetail extends LightningElement {
-    @track error;
     @track isLoading = true;
     @api fields;
     @api accountId;

@@ -4,7 +4,6 @@ import { LightningElement, api, track } from 'lwc';
 export default class AccountsTable extends LightningElement {
     @track error;
     @track nAccounts;
-    @track fields;
 
     @api
     get accounts() {
